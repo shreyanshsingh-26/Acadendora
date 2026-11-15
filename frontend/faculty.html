@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acadendora | Faculty Attendance Terminal</title>
+    <style>
+        :root {
+            --bg: #05070c;
+            --card-bg: #0b101b;
+            --card-border: #161f33;
+            --card-hover: #131c30;
+            --primary: #4f46e5;
+            --success: #10b981;
+            --success-bg: rgba(16, 185, 129, 0.12);
+            --danger: #f43f5e;
+            --danger-bg: rgba(244, 63, 94, 0.12);
+            --warning: #f59e0b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --track: #121929;
+            --neon-green: #00ff88;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", sans-serif;
+            margin: 0;
+            padding: 24px 36px;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            background: #141c2e;
+            border: 1px solid #243352;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 15px;
+            color: #38bdf8;
+        }
+
+        .user-info h2 {
+            margin: 0 0 5px 0;
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: -0.01em;
+        }
+
+        .meta-tags {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chip-faculty {
+            background: rgba(99, 102, 241, 0.12);
+            color: #a5b4fc;
+            border: 1px solid rgba(99, 102, 241, 0.28);
+            padding: 2px 9px;
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 11px;
+            letter-spacing: 0.02em;
+        }
+
+        .chip-dept {
+            background: rgba(16, 185, 129, 0.12);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.28);
+            padding: 2px 9px;
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+
+        .chip-emp {
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--neon-green);
+            border: 1px solid rgba(0, 255, 136, 0.35);
+            padding: 2px 9px;
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 11px;
+            font-family: monospace;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        select.faculty-switch {
+            background: #0b101b;
+            border: 1px solid var(--card-border);
+            color: #f8fafc;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .btn-portal {
+            background: #be123c;
+            border: 1px solid #9f1239;
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.15s ease;
+        }
+
+        .btn-portal:hover {
+            background: #9f1239;
+        }
+
+        .tab-nav {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 22px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-muted);
+            padding: 8px 18px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.15s ease;
+        }
+
+        .tab-btn:hover {
+            color: #fff;
+            background: #101626;
+        }
+
+        .tab-btn.active {
+            color: #fff;
+            background: #141c2e;
+            border-color: #243352;
+            font-weight: 600;
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        .faculty-grid {
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            gap: 22px;
+            align-items: start;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 22px;
+        }
+
+        .card-title {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .form-select,
+        .form-input {
+            width: 100%;
+            background: #060910;
+            border: 1px solid var(--card-border);
+            color: #fff;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            outline: none;
+            transition: border-color 0.15s ease;
+        }
+
+        .form-select:focus,
+        .form-input:focus {
+            border-color: #3b82f6;
+        }
+
+        .class-meta-box {
+            background: #060910;
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 14px;
+            margin-top: 14px;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .meta-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+
+        .meta-row span:first-child {
+            color: var(--text-muted);
+        }
+
+        .meta-row span:last-child {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .roster-header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-quick {
+            background: #111726;
+            border: 1px solid #1c2740;
+            color: #cbd5e1;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .btn-quick:hover {
+            background: #192338;
+            color: #fff;
+        }
+
+        .counter-badge {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .counter-badge strong {
+            color: #fff;
+        }
+
+        .roster-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .student-row {
+            background: #060910;
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: border-color 0.15s ease;
+        }
+
+        .student-row:hover {
+            border-color: #243354;
+        }
+
+        .student-bio {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .student-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 6px;
+            background: #101626;
+            border: 1px solid #1a253d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .student-names h4 {
+            margin: 0 0 2px 0;
+            font-size: 14px;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .student-enrollment-tag {
+            font-size: 11px;
+            color: #64748b;
+            font-family: monospace;
+        }
+
+        .status-toggle {
+            display: flex;
+            background: #090d16;
+            border: 1px solid #161f33;
+            border-radius: 6px;
+            padding: 2px;
+            gap: 2px;
+        }
+
+        .status-btn {
+            background: transparent;
+            border: none;
+            color: #64748b;
+            padding: 6px 14px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .status-btn.active-present {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+            font-weight: 700;
+        }
+
+        .status-btn.active-absent {
+            background: rgba(244, 63, 94, 0.2);
+            color: #fb7185;
+            font-weight: 700;
+        }
+
+        .status-btn.active-late {
+            background: rgba(245, 158, 11, 0.2);
+            color: #fbbf24;
+            font-weight: 700;
+        }
+
+        .btn-submit-acid {
+            width: 100%;
+            background: #4f46e5;
+            border: 1px solid #4338ca;
+            color: #fff;
+            padding: 14px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: background 0.15s ease;
+        }
+
+        .btn-submit-acid:hover {
+            background: #4338ca;
+        }
+
+        .btn-submit-acid:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            text-align: left;
+        }
+
+        .history-table th {
+            background: #060910;
+            color: var(--text-muted);
+            padding: 12px 14px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .history-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid #141c2c;
+            color: #e2e8f0;
+        }
+
+        .history-table tr:hover td {
+            background: #090e18;
+        }
+
+        .sql-console {
+            background: #060910;
+            border: 1px solid #161f33;
+            border-radius: 10px;
+            padding: 20px;
+            font-family: Consolas, Monaco, "Courier New", monospace;
+            font-size: 13px;
+            color: #38bdf8;
+            line-height: 1.6;
+        }
+
+        .sql-block {
+            background: #090d16;
+            border: 1px solid #141c2c;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .sql-label {
+            color: #f59e0b;
+            font-weight: 600;
+            font-size: 12px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Top Header -->
+    <div class="top-header">
+        <div class="user-profile">
+            <div class="avatar" id="faculty-avatar">AG</div>
+            <div class="user-info">
+                <h2 id="faculty-name">Dr. Aarti Goel</h2>
+                <div class="meta-tags">
+                    <span class="chip-faculty" id="faculty-designation">Associate Professor</span>
+                    <span class="chip-dept" id="faculty-dept">CSE</span>
+                    <span class="chip-emp" id="faculty-emp-code">EMP101</span>
+                </div>
+            </div>
+        </div>
+        <div class="header-actions">
+            <select class="faculty-switch" id="faculty-select" onchange="onFacultyChange(this.value)">
+                <option value="1">Dr. Aarti Goel (CSE • EMP101)</option>
+                <option value="2">Prof. Abhishek Chaudhary (CSE • EMP102)</option>
+                <option value="3">Dr. Neetu Singh (ECE • EMP103)</option>
+                <option value="4">Dr. Vikas Saxena (CSE • EMP104)</option>
+                <option value="7">Dr. Sandeep Kumar Singh (MnC • EMP107)</option>
+            </select>
+            <a href="index.html" class="btn-portal">Switch Portal</a>
+        </div>
+    </div>
+
+    <!-- 4-Tab Navbar -->
+    <div class="tab-nav">
+        <button class="tab-btn active" onclick="switchTab('mark')">📝 Mark Attendance</button>
+        <button class="tab-btn" onclick="switchTab('history')">📋 Attendance Marked History</button>
+        <button class="tab-btn" onclick="switchTab('override')">✍️ Audit Override & History</button>
+        <button class="tab-btn" onclick="switchTab('sql')">💻 Live SQL Trace</button>
+    </div>
+
+    <!-- TAB 1: MARK CLASS ATTENDANCE -->
+    <div id="tab-mark" class="tab-pane active">
+        <div class="faculty-grid">
+            <div>
+                <div class="card">
+                    <div class="card-title"><span>Assigned Lecture / Lab</span></div>
+                    <div class="form-group">
+                        <label class="form-label">Select Class Schedule</label>
+                        <select class="form-select" id="assigned-classes-select" onchange="onClassSelected()">
+                            <option value="">Loading assigned classes...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Lecture Date</label>
+                        <input type="date" class="form-input" id="session-date">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Curriculum Topic Covered</label>
+                        <input type="text" class="form-input" id="session-topic"
+                            value="Database Transactions & 2PL Locking">
+                    </div>
+                    <div class="class-meta-box">
+                        <div class="meta-row"><span>Course:</span><span id="meta-course-code">--</span></div>
+                        <div class="meta-row"><span>Enrolled Section:</span><span id="meta-section">--</span></div>
+                        <div class="meta-row"><span>Allocated Room:</span><span id="meta-room">--</span></div>
+                        <div class="meta-row"><span>Time Slot:</span><span id="meta-slot">--</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="roster-header-actions">
+                    <div>
+                        <span class="counter-badge">
+                            Enrolled Students: <strong id="roster-count">0</strong> |
+                            Present: <strong id="present-count" style="color: #34d399;">0</strong> |
+                            Absent: <strong id="absent-count" style="color: #fb7185;">0</strong>
+                        </span>
+                    </div>
+                    <div class="action-btns">
+                        <button class="btn-quick" onclick="markAllStatus('Present')">🟢 Mark All Present</button>
+                        <button class="btn-quick" onclick="markAllStatus('Absent')">🔴 Mark All Absent</button>
+                    </div>
+                </div>
+                <div class="roster-list" id="roster-list">
+                    <div style="text-align: center; color: #64748b; padding: 40px 0;">Select an assigned class to load
+                        student roster.</div>
+                </div>
+                <button class="btn-submit-acid" id="btn-submit" onclick="submitAttendance()">
+                    <span>⚡ Submit Class Attendance (ACID Transaction)</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 2: ATTENDANCE MARKED HISTORY -->
+    <div id="tab-history" class="tab-pane">
+        <div class="card">
+            <div class="card-title">
+                <span>Class Attendance Sessions Marked by this Faculty</span>
+                <button class="btn-quick" onclick="loadFacultyHistory()">🔄 Refresh History</button>
+            </div>
+            <div style="overflow-x: auto;">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Session ID</th>
+                            <th>Date</th>
+                            <th>Course</th>
+                            <th>Batch</th>
+                            <th>Topic Delivered</th>
+                            <th>Present / Total</th>
+                            <th>Audit Integrity</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-table-body">
+                        <tr>
+                            <td colspan="7" style="text-align: center; color: #64748b; padding: 30px;">Loading session
+                                history...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 3: AUDIT OVERRIDE & COMPLIANCE -->
+    <div id="tab-override" class="tab-pane">
+        <div style="display: grid; grid-template-columns: 400px 1fr; gap: 22px; align-items: start;">
+
+            <!-- ✅ UPDATED Override Form -->
+            <div class="card">
+                <div class="card-title"><span>Authorize Attendance Override</span></div>
+                <p style="font-size: 12px; color: var(--text-muted); line-height: 1.5; margin-top: 0;">
+                    Activates trigger <code>trg_attendance_audit</code>. Automatically records old vs new status for
+                    institutional accountability.
+                </p>
+
+                <!-- CHANGE A: Session dropdown (replaces Session ID input) -->
+                <div class="form-group">
+                    <label class="form-label">Select Session</label>
+                    <select class="form-select" id="override-session-select" onchange="loadOverrideRoster()">
+                        <option value="">— pick a session from history —</option>
+                    </select>
+                </div>
+
+                <!-- CHANGE A: Student dropdown (replaces Student ID input) -->
+                <div class="form-group">
+                    <label class="form-label">Select Student</label>
+                    <select class="form-select" id="override-student-select"
+                        onchange="document.getElementById('override-student-id').value = this.value">
+                        <option value="">— select session first —</option>
+                    </select>
+                </div>
+
+                <!-- Hidden inputs: auto-filled, used by executeOverride() -->
+                <input type="hidden" id="override-session-id">
+                <input type="hidden" id="override-student-id">
+
+                <div class="form-group">
+                    <label class="form-label">New Status</label>
+                    <select class="form-select" id="override-new-status">
+                        <option value="Present">Present (Approved Medical / OD)</option>
+                        <option value="Absent">Absent (Disciplinary)</option>
+                        <option value="Late">Late</option>
+                        <option value="Excused">Excused (Institutional Representation)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Justification / Reason</label>
+                    <input type="text" class="form-input" id="override-reason"
+                        value="Approved medical slip submitted to HOD">
+                </div>
+
+                <button class="btn-submit-acid" style="background: #2563eb;" onclick="executeOverride()">
+                    Execute Override (Fire Audit Trigger)
+                </button>
+                <div id="override-status-msg" style="margin-top: 14px; font-size: 12px; display: none;"></div>
+            </div>
+
+            <!-- Audit Trail Log Table -->
+            <div class="card">
+                <div class="card-title">
+                    <span>Audit Trail Log (ATTENDANCE_AUDIT)</span>
+                    <button class="btn-quick" onclick="loadAuditLogs()">🔄 Refresh Audit Trail</button>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>Audit ID</th>
+                                <th>Student</th>
+                                <th>Session</th>
+                                <th>Old → New</th>
+                                <th>Authorized By</th>
+                                <th>Timestamp</th>
+                                <th>Reason</th>
+                            </tr>
+                        </thead>
+                        <tbody id="audit-table-body">
+                            <tr>
+                                <td colspan="7" style="text-align: center; color: #64748b; padding: 30px;">Loading audit
+                                    logs...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 4: LIVE SQL TRACE -->
+    <div id="tab-sql" class="tab-pane">
+        <div class="card">
+            <div class="card-title">
+                <span>Relational Query Execution Console</span>
+                <span style="font-size: 11px; text-transform: none; color: #38bdf8;">Active Database Commands</span>
+            </div>
+            <div class="sql-console">
+                <div class="sql-block">
+                    <div class="sql-label">-- 1. Atomic Attendance Submission (ACID Transaction)</div>
+                    <span style="color: #fbbf24;">START TRANSACTION;</span><br>
+                    CALL CreateAttendanceSession(<span id="trace-timetable-id">1</span>, <span
+                        id="trace-faculty-id">1</span>, '2026-11-15', 'Database Transactions & 2PL', @Session_ID);<br>
+                    INSERT INTO ATTENDANCE (Student_ID, Session_ID, Status) VALUES<br>
+                    &nbsp;&nbsp;(8, @Session_ID, 'Present'),<br>
+                    &nbsp;&nbsp;(9, @Session_ID, 'Present'),<br>
+                    &nbsp;&nbsp;(10, @Session_ID, 'Present');<br>
+                    <span style="color: #34d399;">COMMIT;</span> -- All-or-Nothing Atomicity Guaranteed
+                </div>
+                <div class="sql-block">
+                    <div class="sql-label">-- 2. Audit Trigger Activation on Record Override</div>
+                    UPDATE ATTENDANCE SET Status = 'Present' WHERE Student_ID = 10 AND Session_ID = 1;<br>
+                    -- Activates Trigger: <code>trg_attendance_audit</code> (AFTER UPDATE ON ATTENDANCE)
+                </div>
+                <div class="sql-block">
+                    <div class="sql-label">-- 3. Strict Role-Isolated Timetable Query</div>
+                    SELECT t.Timetable_ID, c.Course_Name, s.Section_Name, r.Room_Number, ts.Day_Of_Week, ts.Start_Time,
+                    ts.End_Time<br>
+                    FROM TIMETABLE t<br>
+                    JOIN COURSE c ON t.Course_ID = c.Course_ID<br>
+                    JOIN SECTION s ON t.Section_ID = s.Section_ID<br>
+                    JOIN ROOM r ON t.Room_ID = r.Room_ID<br>
+                    JOIN TIME_SLOT ts ON t.Slot_ID = ts.Slot_ID<br>
+                    WHERE t.Faculty_ID = <span id="trace-faculty-id-2">1</span>;
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const FACULTY_DIRECTORY = {
+            1: { name: "Dr. Aarti Goel", emp: "EMP101", dept: "CSE", designation: "Associate Professor", avatar: "AG" },
+            2: { name: "Prof. Abhishek Chaudhary", emp: "EMP102", dept: "CSE", designation: "Assistant Professor", avatar: "AC" },
+            3: { name: "Dr. Neetu Singh", emp: "EMP103", dept: "ECE", designation: "Associate Professor", avatar: "NS" },
+            4: { name: "Dr. Vikas Saxena", emp: "EMP104", dept: "CSE", designation: "Professor", avatar: "VS" },
+            7: { name: "Dr. Sandeep Kumar Singh", emp: "EMP107", dept: "MnC", designation: "Associate Professor", avatar: "SS" }
+        };
+
+        const urlParams = new URLSearchParams(window.location.search);
+        let activeFacultyId = parseInt(urlParams.get('id')) || 1;
+        let assignedClasses = [];
+        let currentRoster = [];
+        let currentActiveTab = 'mark';
+
+        document.getElementById('session-date').value = new Date().toISOString().split('T')[0];
+
+        function formatTime(t) {
+            if (!t) return '--';
+            const parts = t.trim().split(':');
+            return `${parts[0].padStart(2, '0')}:${parts[1]}`;
+        }
+
+        function switchTab(tabName) {
+            currentActiveTab = tabName;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+
+            if (tabName === 'mark') {
+                document.querySelectorAll('.tab-btn')[0].classList.add('active');
+                document.getElementById('tab-mark').classList.add('active');
+            } else if (tabName === 'history') {
+                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+                document.getElementById('tab-history').classList.add('active');
+                loadFacultyHistory();
+            } else if (tabName === 'override') {
+                document.querySelectorAll('.tab-btn')[2].classList.add('active');
+                document.getElementById('tab-override').classList.add('active');
+                loadAuditLogs();
+                populateOverrideSessions(); // CHANGE C (also called on tab switch)
+            } else if (tabName === 'sql') {
+                document.querySelectorAll('.tab-btn')[3].classList.add('active');
+                document.getElementById('tab-sql').classList.add('active');
+            }
+        }
+
+        // CHANGE C: added populateOverrideSessions() here
+        function onFacultyChange(newId) {
+            activeFacultyId = parseInt(newId);
+            const newUrl = new URL(window.location);
+            newUrl.searchParams.set('id', activeFacultyId);
+            window.history.pushState({}, '', newUrl);
+            updateFacultyHeader();
+            loadAssignedClasses();
+            loadFacultyHistory();
+            loadAuditLogs();
+            populateOverrideSessions(); // CHANGE C
+        }
+
+        function updateFacultyHeader() {
+            const fac = FACULTY_DIRECTORY[activeFacultyId] || { name: `Faculty ${activeFacultyId}`, emp: "EMP---", dept: "CSE", designation: "Faculty", avatar: "FA" };
+            document.getElementById('faculty-name').innerText = fac.name;
+            document.getElementById('faculty-avatar').innerText = fac.avatar;
+            document.getElementById('faculty-designation').innerText = fac.designation;
+            document.getElementById('faculty-dept').innerText = fac.dept;
+            document.getElementById('faculty-emp-code').innerText = fac.emp;
+            document.getElementById('faculty-select').value = activeFacultyId;
+            const fId1 = document.getElementById('trace-faculty-id');
+            const fId2 = document.getElementById('trace-faculty-id-2');
+            if (fId1) fId1.innerText = activeFacultyId;
+            if (fId2) fId2.innerText = activeFacultyId;
+        }
+
+        async function loadAssignedClasses() {
+            try {
+                const res = await fetch(`http://127.0.0.1:8000/api/faculty/${activeFacultyId}/assigned-classes`);
+                assignedClasses = await res.json();
+                const select = document.getElementById('assigned-classes-select');
+                select.innerHTML = '';
+                if (!assignedClasses || assignedClasses.length === 0) {
+                    select.innerHTML = '<option value="">No classes scheduled for this faculty</option>';
+                    document.getElementById('roster-list').innerHTML = '<div style="color: #64748b; text-align: center; padding: 30px;">No scheduled timetable sessions.</div>';
+                    return;
+                }
+                assignedClasses.forEach((c) => {
+                    const opt = document.createElement('option');
+                    opt.value = c.Timetable_ID;
+                    opt.innerText = `${c.Course_Code} - ${c.Course_Name} (${c.Section_Name}) • ${c.Day_Of_Week} ${formatTime(c.Start_Time)} - ${formatTime(c.End_Time)}`;
+                    select.appendChild(opt);
+                });
+                onClassSelected();
+            } catch (err) {
+                console.error("Error loading assigned classes:", err);
+            }
+        }
+
+        async function onClassSelected() {
+            const timetableId = parseInt(document.getElementById('assigned-classes-select').value);
+            const selectedClass = assignedClasses.find(c => c.Timetable_ID === timetableId);
+            if (selectedClass) {
+                document.getElementById('meta-course-code').innerText = `${selectedClass.Course_Code} (${selectedClass.Course_Name})`;
+                document.getElementById('meta-section').innerText = selectedClass.Section_Name;
+                document.getElementById('meta-room').innerText = `${selectedClass.Room_Number} (${selectedClass.Building || 'Academic Block'})`;
+                document.getElementById('meta-slot').innerText = `${selectedClass.Day_Of_Week} ${formatTime(selectedClass.Start_Time)} - ${formatTime(selectedClass.End_Time)}`;
+                const tIdTrace = document.getElementById('trace-timetable-id');
+                if (tIdTrace) tIdTrace.innerText = timetableId;
+            }
+            try {
+                const res = await fetch(`http://127.0.0.1:8000/api/faculty/roster/${timetableId}`);
+                currentRoster = await res.json();
+                renderRoster();
+            } catch (err) {
+                console.error("Error loading roster:", err);
+            }
+        }
+
+        function renderRoster() {
+            const container = document.getElementById('roster-list');
+            container.innerHTML = '';
+            document.getElementById('roster-count').innerText = currentRoster.length;
+            if (!currentRoster || currentRoster.length === 0) {
+                container.innerHTML = '<div style="color: #64748b; text-align: center; padding: 30px;">No students enrolled in this section.</div>';
+                updateCounts();
+                return;
+            }
+            currentRoster.forEach(student => {
+                if (!student.currentStatus) student.currentStatus = 'Present';
+                const row = document.createElement('div');
+                row.className = 'student-row';
+                row.id = `row-student-${student.Student_ID}`;
+                const initials = student.Full_Name.split(' ').map(n => n[0]).join('').substring(0, 2);
+                row.innerHTML = `
+                    <div class="student-bio">
+                        <div class="student-avatar">${initials}</div>
+                        <div class="student-names">
+                            <h4>${student.Full_Name}</h4>
+                            <span class="student-enrollment-tag">Roll: ${student.Enrollment_No}</span>
+                        </div>
+                    </div>
+                    <div class="status-toggle">
+                        <button class="status-btn ${student.currentStatus === 'Present' ? 'active-present' : ''}"
+                                onclick="setStudentStatus(${student.Student_ID}, 'Present')">Present</button>
+                        <button class="status-btn ${student.currentStatus === 'Absent' ? 'active-absent' : ''}"
+                                onclick="setStudentStatus(${student.Student_ID}, 'Absent')">Absent</button>
+                        <button class="status-btn ${student.currentStatus === 'Late' ? 'active-late' : ''}"
+                                onclick="setStudentStatus(${student.Student_ID}, 'Late')">Late</button>
+                    </div>
+                `;
+                container.appendChild(row);
+            });
+            updateCounts();
+        }
+
+        function setStudentStatus(studentId, status) {
+            const student = currentRoster.find(s => s.Student_ID === studentId);
+            if (student) {
+                student.currentStatus = status;
+                const row = document.getElementById(`row-student-${studentId}`);
+                if (row) {
+                    const btns = row.querySelectorAll('.status-btn');
+                    btns[0].className = `status-btn ${status === 'Present' ? 'active-present' : ''}`;
+                    btns[1].className = `status-btn ${status === 'Absent' ? 'active-absent' : ''}`;
+                    btns[2].className = `status-btn ${status === 'Late' ? 'active-late' : ''}`;
+                }
+                updateCounts();
+            }
+        }
+
+        function markAllStatus(status) {
+            currentRoster.forEach(s => s.currentStatus = status);
+            renderRoster();
+        }
+
+        function updateCounts() {
+            const present = currentRoster.filter(s => s.currentStatus === 'Present').length;
+            const absent = currentRoster.filter(s => s.currentStatus === 'Absent').length;
+            document.getElementById('present-count').innerText = present;
+            document.getElementById('absent-count').innerText = absent;
+        }
+
+        async function submitAttendance() {
+            const timetableId = parseInt(document.getElementById('assigned-classes-select').value);
+            const sessionDate = document.getElementById('session-date').value;
+            const topic = document.getElementById('session-topic').value || "Regular Lecture";
+            if (!timetableId || currentRoster.length === 0) {
+                alert("Please select a class with enrolled students.");
+                return;
+            }
+            const payload = {
+                timetable_id: timetableId,
+                faculty_id: activeFacultyId,
+                session_date: sessionDate,
+                topic: topic,
+                attendance_records: currentRoster.map(s => ({
+                    student_id: s.Student_ID,
+                    status: s.currentStatus || 'Present'
+                }))
+            };
+            const submitBtn = document.getElementById('btn-submit');
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Executing ACID Transaction...";
+            try {
+                const res = await fetch('http://127.0.0.1:8000/api/faculty/mark-attendance', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    alert(`✅ Attendance successfully committed under Session #${data.session_id} via ACID transaction.`);
+                    switchTab('history');
+                } else {
+                    alert(`Transaction Error: ${JSON.stringify(data.detail)}`);
+                }
+            } catch (err) {
+                alert("Failed to connect to backend API.");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerText = "⚡ Submit Class Attendance (ACID Transaction)";
+            }
+        }
+
+        async function loadFacultyHistory() {
+            const tbody = document.getElementById('history-table-body');
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #64748b; padding: 20px;">Fetching session records...</td></tr>';
+            try {
+                const res = await fetch(`http://127.0.0.1:8000/api/faculty/${activeFacultyId}/history`);
+                const history = await res.json();
+                tbody.innerHTML = '';
+                if (!history || history.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #64748b; padding: 20px;">No attendance sessions marked by this faculty yet.</td></tr>';
+                    return;
+                }
+                history.forEach(h => {
+                    const overrideCount = h.Override_Count || 0;
+                    const auditBadge = overrideCount > 0
+                        ? `<span style="background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.35); padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;" onclick="switchTab('override')" title="Click to view audit trail">⚠️ ${overrideCount} Modified</span>`
+                        : `<span style="background: rgba(16,185,129,0.12); color: #34d399; border: 1px solid rgba(16,185,129,0.25); padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">✅ Original (ACID)</span>`;
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td style="font-family: monospace; color: #38bdf8;">#${h.Session_ID}</td>
+                        <td>${h.Session_Date}</td>
+                        <td><strong>${h.Course_Code}</strong> - ${h.Course_Name}</td>
+                        <td><span class="chip-dept">${h.Section_Name}</span></td>
+                        <td>${h.Topic_Delivered}</td>
+                        <td><strong style="color: #34d399;">${h.Present_Count}</strong> / ${h.Total_Students}</td>
+                        <td>${auditBadge}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } catch (err) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #fb7185; padding: 20px;">Failed to load history.</td></tr>';
+            }
+        }
+
+        async function loadAuditLogs() {
+            const tbody = document.getElementById('audit-table-body');
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #64748b; padding: 20px;">Fetching your audit trail...</td></tr>';
+            try {
+                const res = await fetch(`http://127.0.0.1:8000/api/faculty/audit-logs?faculty_id=${activeFacultyId}`);
+                const logs = await res.json();
+                tbody.innerHTML = '';
+                if (!logs || logs.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #64748b; padding: 20px;">No override records authorized by this faculty yet.</td></tr>';
+                    return;
+                }
+                logs.forEach(l => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td style="font-family: monospace; color: #fbbf24;">#${l.Audit_ID}</td>
+                        <td>${l.Student_Name || 'Student ' + l.Student_ID}</td>
+                        <td style="font-family: monospace;">#${l.Session_ID}</td>
+                        <td><span style="color: #fb7185;">${l.Old_Status}</span> &rarr; <span style="color: #34d399; font-weight: 700;">${l.New_Status}</span></td>
+                        <td><span class="chip-faculty">${l.Changed_By}</span></td>
+                        <td style="font-size: 11px; color: #94a3b8;">${l.Changed_At}</td>
+                        <td style="font-size: 12px; color: #cbd5e1;">${l.Change_Reason}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } catch (err) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #fb7185; padding: 20px;">Failed to load audit logs.</td></tr>';
+            }
+        }
+
+        // CHANGE B: Populate session dropdown from faculty history
+        async function populateOverrideSessions() {
+            try {
+                const res = await fetch(`http://127.0.0.1:8000/api/faculty/${activeFacultyId}/history`);
+                const sessions = await res.json();
+                const sel = document.getElementById('override-session-select');
+                sel.innerHTML = '<option value="">— pick a session —</option>';
+                sessions.forEach(s => {
+                    sel.innerHTML += `<option value="${s.Session_ID}">#${s.Session_ID} · ${s.Session_Date} · ${s.Course_Code} (${s.Section_Name})</option>`;
+                });
+                // Reset student dropdown and hidden inputs
+                document.getElementById('override-student-select').innerHTML = '<option value="">— select session first —</option>';
+                document.getElementById('override-session-id').value = '';
+                document.getElementById('override-student-id').value = '';
+            } catch (e) {
+                console.error('Could not load sessions for override', e);
+            }
+        }
+
+        // CHANGE B: Load roster for selected session, show current status per student
+        async function loadOverrideRoster() {
+            const sessionId = document.getElementById('override-session-select').value;
+            document.getElementById('override-session-id').value = sessionId; // auto-fill hidden
+            const studentSel = document.getElementById('override-student-select');
+            document.getElementById('override-student-id').value = '';
+
+            if (!sessionId) {
+                studentSel.innerHTML = '<option value="">— select session first —</option>';
+                return;
+            }
+            studentSel.innerHTML = '<option value="">Loading students...</option>';
+            try {
+                const res = await fetch(`http://127.0.0.1:8000/api/faculty/roster-by-session/${sessionId}`);
+                const students = await res.json();
+                studentSel.innerHTML = '<option value="">— select student —</option>';
+                students.forEach(s => {
+                    studentSel.innerHTML += `<option value="${s.Student_ID}">${s.Full_Name} (${s.Enrollment_No}) · Currently: ${s.Current_Status}</option>`;
+                });
+            } catch (e) {
+                studentSel.innerHTML = '<option value="">Failed to load students</option>';
+            }
+        }
+
+        async function executeOverride() {
+            const studentId = parseInt(document.getElementById('override-student-id').value);
+            const sessionId = parseInt(document.getElementById('override-session-id').value);
+            const newStatus = document.getElementById('override-new-status').value;
+            const reason = document.getElementById('override-reason').value;
+            const fac = FACULTY_DIRECTORY[activeFacultyId] || { name: "Faculty" };
+
+            if (!studentId || !sessionId) {
+                alert("Please select both a session and a student.");
+                return;
+            }
+
+            const payload = {
+                student_id: studentId,
+                session_id: sessionId,
+                new_status: newStatus,
+                reason: reason,
+                changed_by: fac.name
+            };
+
+            try {
+                const res = await fetch('http://127.0.0.1:8000/api/faculty/override-attendance', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                const msg = document.getElementById('override-status-msg');
+                msg.style.display = 'block';
+                if (res.ok) {
+                    msg.innerHTML = `<span style="color: #34d399;">✅ ${data.message}! Row-level trigger <code>trg_attendance_audit</code> recorded the modification.</span>`;
+                    loadAuditLogs();
+                    populateOverrideSessions(); // refresh session list in case status changed
+                } else {
+                    msg.innerHTML = `<span style="color: #fb7185;">❌ Error: ${JSON.stringify(data.detail)}</span>`;
+                }
+            } catch (err) {
+                alert("Override failed to connect.");
+            }
+        }
+
+        // Initialize
+        updateFacultyHeader();
+        loadAssignedClasses();
+    </script>
+</body>
+
+</html>
