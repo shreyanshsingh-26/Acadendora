@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acadendora | Admin Control Panel</title>
+    <style>
+        :root {
+            --bg: #05070c;
+            --card-bg: #0b101b;
+            --card-border: #161f33;
+            --card-hover: #131c30;
+            --primary: #4f46e5;
+            --success: #10b981;
+            --success-bg: rgba(16, 185, 129, 0.12);
+            --danger: #f43f5e;
+            --danger-bg: rgba(244, 63, 94, 0.12);
+            --warning: #f59e0b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --track: #121929;
+            --neon-green: #00ff88;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", sans-serif;
+            margin: 0;
+            padding: 24px 36px;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            background: #1a0a2e;
+            border: 1px solid #3b1f6e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 15px;
+            color: #c084fc;
+        }
+
+        .user-info h2 {
+            margin: 0 0 5px 0;
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: -0.01em;
+        }
+
+        .meta-tags {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chip-faculty {
+            background: rgba(99, 102, 241, 0.12);
+            color: #a5b4fc;
+            border: 1px solid rgba(99, 102, 241, 0.28);
+            padding: 2px 9px;
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 11px;
+        }
+
+        .chip-admin {
+            background: rgba(168, 85, 247, 0.12);
+            color: #c084fc;
+            border: 1px solid rgba(168, 85, 247, 0.30);
+            padding: 2px 9px;
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 11px;
+            letter-spacing: 0.03em;
+        }
+
+        .chip-dept {
+            background: rgba(16, 185, 129, 0.12);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.28);
+            padding: 2px 9px;
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        select.faculty-switch {
+            background: #0b101b;
+            border: 1px solid var(--card-border);
+            color: #f8fafc;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .btn-portal {
+            background: #be123c;
+            border: 1px solid #9f1239;
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.15s ease;
+        }
+
+        .btn-portal:hover {
+            background: #9f1239;
+        }
+
+        /* TABS */
+        .tab-nav {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 22px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-muted);
+            padding: 8px 18px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.15s ease;
+        }
+
+        .tab-btn:hover {
+            color: #fff;
+            background: #101626;
+        }
+
+        .tab-btn.active {
+            color: #fff;
+            background: #141c2e;
+            border-color: #243352;
+            font-weight: 600;
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        /* CARDS */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 22px;
+        }
+
+        .card-title {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* STAT CARDS */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 20px 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .stat-card .stat-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+        }
+
+        .stat-card .stat-value {
+            font-size: 32px;
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: -0.02em;
+        }
+
+        .stat-card.students .stat-value {
+            color: #38bdf8;
+        }
+
+        .stat-card.sessions .stat-value {
+            color: var(--neon-green);
+        }
+
+        .stat-card.pct .stat-value {
+            color: #a78bfa;
+        }
+
+        .stat-card.overrides .stat-value {
+            color: #fbbf24;
+        }
+
+        .stat-card .stat-sub {
+            font-size: 11px;
+            color: #4b5e7a;
+        }
+
+        /* BUTTONS */
+        .btn-quick {
+            background: #111726;
+            border: 1px solid #1c2740;
+            color: #cbd5e1;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .btn-quick:hover {
+            background: #192338;
+            color: #fff;
+        }
+
+        /* TABLES */
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            text-align: left;
+        }
+
+        .history-table th {
+            background: #060910;
+            color: var(--text-muted);
+            padding: 12px 14px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .history-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid #141c2c;
+            color: #e2e8f0;
+        }
+
+        .history-table tr:hover td {
+            background: #090e18;
+        }
+
+        .history-table tr.row-critical td {
+            background: rgba(244, 63, 94, 0.07);
+        }
+
+        .history-table tr.row-critical:hover td {
+            background: rgba(244, 63, 94, 0.13);
+        }
+
+        /* RISK BADGES */
+        .badge-critical {
+            background: rgba(244, 63, 94, 0.15);
+            color: #fb7185;
+            border: 1px solid rgba(244, 63, 94, 0.35);
+            padding: 2px 8px;
+            border-radius: 5px;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .badge-atrisk {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.35);
+            padding: 2px 8px;
+            border-radius: 5px;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        /* PCT BAR */
+        .pct-bar-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pct-bar-track {
+            flex: 1;
+            height: 6px;
+            border-radius: 3px;
+            background: #121929;
+            overflow: hidden;
+            min-width: 60px;
+        }
+
+        .pct-bar-fill {
+            height: 100%;
+            border-radius: 3px;
+        }
+
+        /* SQL CONSOLE */
+        .sql-console {
+            background: #060910;
+            border: 1px solid #161f33;
+            border-radius: 10px;
+            padding: 20px;
+            font-family: Consolas, Monaco, "Courier New", monospace;
+            font-size: 13px;
+            color: #38bdf8;
+            line-height: 1.6;
+        }
+
+        .sql-block {
+            background: #090d16;
+            border: 1px solid #141c2c;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .sql-block:last-child {
+            margin-bottom: 0;
+        }
+
+        .sql-label {
+            color: #f59e0b;
+            font-weight: 600;
+            font-size: 12px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .kw {
+            color: #c084fc;
+        }
+
+        .fn {
+            color: #38bdf8;
+        }
+
+        .str {
+            color: #86efac;
+        }
+
+        .num {
+            color: #fbbf24;
+        }
+
+        .cmt {
+            color: #334155;
+            font-style: italic;
+        }
+
+        .status-change {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- TOP HEADER -->
+    <div class="top-header">
+        <div class="user-profile">
+            <div class="avatar">🛡</div>
+            <div class="user-info">
+                <h2>Acadendora Admin</h2>
+                <div class="meta-tags">
+                    <span class="chip-admin" id="role-label">System Administrator</span>
+                    <span class="chip-dept">Admin</span>
+                </div>
+            </div>
+        </div>
+        <div class="header-actions">
+            <select class="faculty-switch" id="admin-role-select" onchange="onRoleSwitch(this.value)">
+                <option value="admin">System Admin</option>
+                <option value="hod">HOD View</option>
+                <option value="exam">Exam Cell</option>
+            </select>
+            <a href="index.html" class="btn-portal">Switch Portal</a>
+        </div>
+    </div>
+
+    <!-- TAB NAV -->
+    <div class="tab-nav">
+        <button class="tab-btn active" onclick="switchTab('dashboard')">📊 Institution Dashboard</button>
+        <button class="tab-btn" onclick="switchTab('audit')">📋 Global Audit Trail</button>
+        <button class="tab-btn" onclick="switchTab('analytics')">📈 Department Analytics</button>
+        <button class="tab-btn" onclick="switchTab('sql')">💻 Live SQL Trace</button>
+    </div>
+
+    <!-- TAB 1: INSTITUTION DASHBOARD -->
+    <div id="tab-dashboard" class="tab-pane active">
+        <div class="stat-grid">
+            <div class="stat-card students">
+                <div class="stat-label">Total Students</div>
+                <div class="stat-value" id="stat-students">—</div>
+                <div class="stat-sub">Enrolled across all depts</div>
+            </div>
+            <div class="stat-card sessions">
+                <div class="stat-label">Total Sessions</div>
+                <div class="stat-value" id="stat-sessions">—</div>
+                <div class="stat-sub">Attendance sessions conducted</div>
+            </div>
+            <div class="stat-card pct">
+                <div class="stat-label">Overall Attendance %</div>
+                <div class="stat-value" id="stat-pct">—</div>
+                <div class="stat-sub">Institution-wide average</div>
+            </div>
+            <div class="stat-card overrides">
+                <div class="stat-label">Total Overrides</div>
+                <div class="stat-value" id="stat-overrides">—</div>
+                <div class="stat-sub">Audit-logged modifications</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">
+                <span>⚠️ Debarment Risk — Students Below 75% Attendance</span>
+                <button class="btn-quick" onclick="loadDebarred()">🔄 Refresh</button>
+            </div>
+            <div style="overflow-x: auto;">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Enrollment No</th>
+                            <th>Course</th>
+                            <th>Section</th>
+                            <th>Attended / Total</th>
+                            <th>Attendance %</th>
+                            <th>Risk Level</th>
+                        </tr>
+                    </thead>
+                    <tbody id="debarred-table-body">
+                        <tr>
+                            <td colspan="7" style="text-align:center;color:#64748b;padding:30px;">Loading debarment
+                                data...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 2: GLOBAL AUDIT TRAIL -->
+    <div id="tab-audit" class="tab-pane">
+        <div class="card">
+            <div class="card-title">
+                <span>Global Attendance Override Audit Trail</span>
+                <button class="btn-quick" onclick="loadAuditLogs()">🔄 Refresh</button>
+            </div>
+            <div style="overflow-x: auto;">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Audit ID</th>
+                            <th>Student</th>
+                            <th>Session</th>
+                            <th>Date</th>
+                            <th>Course</th>
+                            <th>Old → New</th>
+                            <th>Authorized By</th>
+                            <th>Timestamp</th>
+                            <th>Reason</th>
+                        </tr>
+                    </thead>
+                    <tbody id="audit-table-body">
+                        <tr>
+                            <td colspan="9" style="text-align:center;color:#64748b;padding:30px;">Loading audit trail...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 3: DEPARTMENT ANALYTICS -->
+    <div id="tab-analytics" class="tab-pane">
+        <div class="card">
+            <div class="card-title">
+                <span>Department-wise Attendance Analytics</span>
+                <button class="btn-quick" onclick="loadDeptAnalytics()">🔄 Refresh</button>
+            </div>
+            <div style="overflow-x: auto;">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Department</th>
+                            <th>Code</th>
+                            <th>Students</th>
+                            <th>Sessions</th>
+                            <th>Present</th>
+                            <th>Attendance %</th>
+                        </tr>
+                    </thead>
+                    <tbody id="analytics-table-body">
+                        <tr>
+                            <td colspan="6" style="text-align:center;color:#64748b;padding:30px;">Loading department
+                                analytics...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 4: LIVE SQL TRACE -->
+    <div id="tab-sql" class="tab-pane">
+        <div class="card">
+            <div class="card-title">
+                <span>Relational Query Execution Console</span>
+                <span style="font-size:11px;text-transform:none;color:#38bdf8;">Admin Active Queries</span>
+            </div>
+            <div class="sql-console">
+
+                <div class="sql-block">
+                    <div class="sql-label">-- 1. Debarment Check (HAVING + Derived Table Subquery)</div>
+                    <span class="kw">SELECT</span> s.Person_ID <span class="kw">AS</span> Student_ID, p.Full_Name,
+                    s.Enrollment_No,<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp; c.Course_Code, c.Course_Name, sec.Section_Name,<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp; <span class="fn">COUNT</span>(a.Session_ID) <span class="kw">AS</span>
+                    Total_Sessions,<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp; <span class="fn">SUM</span>(<span class="kw">CASE WHEN</span> a.Status
+                    <span class="kw">IN</span> (<span class="str">'Present'</span>, <span class="str">'Late'</span>)
+                    <span class="kw">THEN</span> <span class="num">1</span> <span class="kw">ELSE</span> <span
+                        class="num">0</span> <span class="kw">END</span>) <span class="kw">AS</span> Present_Count,<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp; <span class="fn">ROUND</span>(<span class="num">100.0</span> * <span
+                        class="fn">SUM</span>(<span class="kw">CASE WHEN</span> a.Status <span class="kw">IN</span>
+                    (<span class="str">'Present'</span>, <span class="str">'Late'</span>) <span class="kw">THEN</span>
+                    <span class="num">1</span> <span class="kw">ELSE</span> <span class="num">0</span> <span
+                        class="kw">END</span>)<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / <span class="fn">NULLIF</span>(<span
+                        class="fn">COUNT</span>(a.Session_ID), <span class="num">0</span>), <span class="num">2</span>)
+                    <span class="kw">AS</span> Attendance_Pct<br>
+                    <span class="kw">FROM</span> ENROLLMENT e<br>
+                    <span class="kw">JOIN</span> STUDENT s <span class="kw">ON</span> e.Student_ID = s.Person_ID<br>
+                    <span class="kw">JOIN</span> PERSON p <span class="kw">ON</span> s.Person_ID = p.Person_ID<br>
+                    <span class="kw">JOIN</span> COURSE c <span class="kw">ON</span> e.Course_ID = c.Course_ID<br>
+                    <span class="kw">JOIN</span> SECTION sec <span class="kw">ON</span> e.Section_ID =
+                    sec.Section_ID<br>
+                    <span class="kw">LEFT JOIN</span> (<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">SELECT</span> a2.Student_ID, a2.Session_ID, a2.Status,
+                    t.Course_ID, t.Section_ID<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">FROM</span> ATTENDANCE a2<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">JOIN</span> ATTENDANCE_SESSION as2 <span
+                        class="kw">ON</span> a2.Session_ID = as2.Session_ID<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">JOIN</span> TIMETABLE t <span class="kw">ON</span>
+                    as2.Timetable_ID = t.Timetable_ID<br>
+                    ) a <span class="kw">ON</span> a.Student_ID = e.Student_ID <span class="kw">AND</span> a.Course_ID =
+                    e.Course_ID <span class="kw">AND</span> a.Section_ID = e.Section_ID<br>
+                    <span class="kw">GROUP BY</span> s.Person_ID, p.Full_Name, s.Enrollment_No, c.Course_Code,
+                    c.Course_Name, sec.Section_Name<br>
+                    <span class="kw">HAVING</span> Attendance_Pct &lt; <span class="num">75</span> <span
+                        class="kw">AND</span> Total_Sessions &gt; <span class="num">0</span><br>
+                    <span class="kw">ORDER BY</span> Attendance_Pct <span class="kw">ASC</span>;
+                </div>
+
+                <div class="sql-block">
+                    <div class="sql-label">-- 2. Global Audit Trail (Multi-Table JOIN, No Faculty Filter)</div>
+                    <span class="kw">SELECT</span> aa.Audit_ID, p.Full_Name <span class="kw">AS</span> Student_Name,<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp; aa.Session_ID, <span class="fn">DATE_FORMAT</span>(ats.Session_Date, <span
+                        class="str">'%Y-%m-%d'</span>) <span class="kw">AS</span> Session_Date,<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp; c.Course_Code, aa.Old_Status, aa.New_Status,<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp; aa.Changed_By, <span class="fn">CAST</span>(aa.Changed_At <span
+                        class="kw">AS</span> CHAR) <span class="kw">AS</span> Changed_At, aa.Change_Reason<br>
+                    <span class="kw">FROM</span> ATTENDANCE_AUDIT aa<br>
+                    <span class="kw">JOIN</span> PERSON p <span class="kw">ON</span> aa.Student_ID = p.Person_ID<br>
+                    <span class="kw">JOIN</span> ATTENDANCE_SESSION ats <span class="kw">ON</span> aa.Session_ID =
+                    ats.Session_ID<br>
+                    <span class="kw">JOIN</span> TIMETABLE t <span class="kw">ON</span> ats.Timetable_ID =
+                    t.Timetable_ID<br>
+                    <span class="kw">JOIN</span> COURSE c <span class="kw">ON</span> t.Course_ID = c.Course_ID<br>
+                    <span class="kw">ORDER BY</span> aa.Audit_ID <span class="kw">DESC</span>;<br>
+                    <span class="cmt">-- No WHERE clause → returns ALL overrides across ALL faculty</span>
+                </div>
+
+                <div class="sql-block">
+                    <div class="sql-label">-- 3. Dept Analytics (GROUP BY + COALESCE + NULLIF)</div>
+                    <span class="kw">SELECT</span> d.Dept_Name, d.Department_Code <span class="kw">AS</span>
+                    Dept_Code,<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp; <span class="fn">COUNT</span>(<span class="kw">DISTINCT</span> s.Person_ID)
+                    <span class="kw">AS</span> Total_Students,<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp; <span class="fn">COUNT</span>(<span class="kw">DISTINCT</span>
+                    ats.Session_ID) <span class="kw">AS</span> Total_Sessions,<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp; <span class="fn">COALESCE</span>(<span class="fn">SUM</span>(<span
+                        class="kw">CASE WHEN</span> a.Status <span class="kw">IN</span> (<span
+                        class="str">'Present'</span>, <span class="str">'Late'</span>) <span class="kw">THEN</span>
+                    <span class="num">1</span> <span class="kw">ELSE</span> <span class="num">0</span> <span
+                        class="kw">END</span>), <span class="num">0</span>) <span class="kw">AS</span>
+                    Present_Count,<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp; <span class="fn">ROUND</span>(<span class="num">100.0</span> * <span
+                        class="fn">COALESCE</span>(<span class="fn">SUM</span>(<span class="kw">CASE WHEN</span>
+                    a.Status <span class="kw">IN</span> (<span class="str">'Present'</span>,<span
+                        class="str">'Late'</span>) <span class="kw">THEN</span> <span class="num">1</span> <span
+                        class="kw">ELSE</span> <span class="num">0</span> <span class="kw">END</span>), <span
+                        class="num">0</span>)<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / <span class="fn">NULLIF</span>(<span
+                        class="fn">COUNT</span>(a.Session_ID), <span class="num">0</span>), <span class="num">2</span>)
+                    <span class="kw">AS</span> Attendance_Pct<br>
+                    <span class="kw">FROM</span> DEPARTMENT d<br>
+                    <span class="kw">LEFT JOIN</span> SECTION sec <span class="kw">ON</span> sec.Dept_ID = d.Dept_ID<br>
+                    <span class="kw">LEFT JOIN</span> STUDENT s <span class="kw">ON</span> s.Section_ID =
+                    sec.Section_ID<br>
+                    <span class="kw">LEFT JOIN</span> ENROLLMENT e <span class="kw">ON</span> e.Student_ID =
+                    s.Person_ID<br>
+                    <span class="kw">LEFT JOIN</span> TIMETABLE t <span class="kw">ON</span> t.Section_ID =
+                    sec.Section_ID<br>
+                    <span class="kw">LEFT JOIN</span> ATTENDANCE_SESSION ats <span class="kw">ON</span> ats.Timetable_ID
+                    = t.Timetable_ID<br>
+                    <span class="kw">LEFT JOIN</span> ATTENDANCE a <span class="kw">ON</span> a.Student_ID =
+                    s.Person_ID<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <span class="kw">AND</span> a.Session_ID = ats.Session_ID<br>
+                    <span class="kw">GROUP BY</span> d.Dept_ID, d.Dept_Name, d.Department_Code<br>
+                    <span class="kw">ORDER BY</span> d.Dept_Name;
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API = 'http://127.0.0.1:8000/api/admin';
+
+        const ROLE_LABELS = { admin: 'System Administrator', hod: 'HOD View', exam: 'Exam Cell' };
+        function onRoleSwitch(role) {
+            document.getElementById('role-label').textContent = ROLE_LABELS[role] || 'System Administrator';
+        }
+
+        function switchTab(name) {
+            document.querySelectorAll('.tab-btn').forEach((b, i) => {
+                b.classList.toggle('active', ['dashboard', 'audit', 'analytics', 'sql'][i] === name);
+            });
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+            document.getElementById('tab-' + name).classList.add('active');
+            if (name === 'audit') loadAuditLogs();
+            if (name === 'analytics') loadDeptAnalytics();
+        }
+
+        function formatPct(n) {
+            const v = parseFloat(n) || 0;
+            const color = v >= 75 ? '#34d399' : v >= 60 ? '#fbbf24' : '#fb7185';
+            return `<span style="color:${color};font-weight:700;">${v.toFixed(1)}%</span>`;
+        }
+
+        function pctBar(n) {
+            const v = Math.min(100, Math.max(0, parseFloat(n) || 0));
+            const color = v >= 75 ? '#10b981' : v >= 60 ? '#f59e0b' : '#f43f5e';
+            return `
+            <div class="pct-bar-wrap">
+                ${formatPct(v)}
+                <div class="pct-bar-track">
+                    <div class="pct-bar-fill" style="width:${v}%;background:${color};"></div>
+                </div>
+            </div>`;
+        }
+
+        async function loadStats() {
+            try {
+                const res = await fetch(`${API}/stats`);
+                const data = await res.json();
+                document.getElementById('stat-students').textContent = data.total_students ?? '—';
+                document.getElementById('stat-sessions').textContent = data.total_sessions ?? '—';
+                document.getElementById('stat-pct').textContent = (parseFloat(data.overall_attendance_pct) || 0).toFixed(1) + '%';
+                document.getElementById('stat-overrides').textContent = data.total_overrides ?? '—';
+            } catch (e) { console.error('Stats load failed:', e); }
+        }
+
+        async function loadDebarred() {
+            const tbody = document.getElementById('debarred-table-body');
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#64748b;padding:20px;">Fetching debarment data...</td></tr>';
+            try {
+                const res = await fetch(`${API}/debarred`);
+                const rows = await res.json();
+                tbody.innerHTML = '';
+                if (!rows || rows.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#34d399;padding:20px;">✅ No students below 75% — all clear!</td></tr>';
+                    return;
+                }
+                rows.forEach(r => {
+                    const pct = parseFloat(r.Attendance_Pct) || 0;
+                    const isCrit = pct < 60;
+                    const badge = isCrit
+                        ? '<span class="badge-critical">🔴 CRITICAL</span>'
+                        : '<span class="badge-atrisk">🟡 AT RISK</span>';
+                    const tr = document.createElement('tr');
+                    if (isCrit) tr.classList.add('row-critical');
+                    tr.innerHTML = `
+                    <td><strong>${r.Full_Name}</strong></td>
+                    <td style="font-family:monospace;color:#94a3b8;">${r.Enrollment_No}</td>
+                    <td><strong>${r.Course_Code}</strong> <span style="color:#64748b;">— ${r.Course_Name}</span></td>
+                    <td><span class="chip-dept">${r.Section_Name}</span></td>
+                    <td><strong style="color:#34d399;">${r.Present_Count}</strong> / <strong>${r.Total_Sessions}</strong></td>
+                    <td>${formatPct(pct)}</td>
+                    <td>${badge}</td>
+                `;
+                    tbody.appendChild(tr);
+                });
+            } catch (e) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#fb7185;padding:20px;">Failed to load debarment data.</td></tr>';
+            }
+        }
+
+        async function loadAuditLogs() {
+            const tbody = document.getElementById('audit-table-body');
+            tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#64748b;padding:20px;">Fetching audit trail...</td></tr>';
+            try {
+                const res = await fetch(`${API}/audit-logs`);
+                const logs = await res.json();
+                tbody.innerHTML = '';
+                if (!logs || logs.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#64748b;padding:20px;">No override records found.</td></tr>';
+                    return;
+                }
+                logs.forEach(l => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                    <td style="font-family:monospace;color:#fbbf24;">#${l.Audit_ID}</td>
+                    <td>${l.Student_Name}</td>
+                    <td style="font-family:monospace;color:#38bdf8;">#${l.Session_ID}</td>
+                    <td>${l.Session_Date}</td>
+                    <td><strong>${l.Course_Code}</strong></td>
+                    <td>
+                        <span class="status-change">
+                            <span style="color:#fb7185;">${l.Old_Status}</span>
+                            <span style="color:#475569;">→</span>
+                            <span style="color:#34d399;font-weight:700;">${l.New_Status}</span>
+                        </span>
+                    </td>
+                    <td><span class="chip-faculty">${l.Changed_By}</span></td>
+                    <td style="font-size:11px;color:#94a3b8;">${l.Changed_At}</td>
+                    <td style="font-size:12px;color:#cbd5e1;">${l.Change_Reason || '—'}</td>
+                `;
+                    tbody.appendChild(tr);
+                });
+            } catch (e) {
+                tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#fb7185;padding:20px;">Failed to load audit logs.</td></tr>';
+            }
+        }
+
+        async function loadDeptAnalytics() {
+            const tbody = document.getElementById('analytics-table-body');
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#64748b;padding:20px;">Fetching department analytics...</td></tr>';
+            try {
+                const res = await fetch(`${API}/dept-analytics`);
+                const rows = await res.json();
+                tbody.innerHTML = '';
+                if (!rows || rows.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#64748b;padding:20px;">No department data found.</td></tr>';
+                    return;
+                }
+                rows.forEach(r => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                    <td><strong>${r.Dept_Name}</strong></td>
+                    <td style="font-family:monospace;color:#a5b4fc;">${r.Dept_Code}</td>
+                    <td style="color:#38bdf8;font-weight:700;">${r.Total_Students}</td>
+                    <td>${r.Total_Sessions}</td>
+                    <td style="color:#34d399;font-weight:700;">${r.Present_Count}</td>
+                    <td>${pctBar(r.Attendance_Pct)}</td>
+                `;
+                    tbody.appendChild(tr);
+                });
+            } catch (e) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#fb7185;padding:20px;">Failed to load analytics.</td></tr>';
+            }
+        }
+
+        // Init
+        loadStats();
+        loadDebarred();
+        loadDeptAnalytics();
+    </script>
+</body>
+
+</html>

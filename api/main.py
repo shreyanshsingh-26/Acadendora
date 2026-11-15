@@ -18,10 +18,10 @@ app.add_middleware(
 )
 
 # Register route modules
-app.include_router(student.router, prefix="/api/student", tags=["Student Portal"])
-app.include_router(faculty.router, prefix="/api/faculty", tags=["Faculty Portal"])
-app.include_router(admin.router, prefix="/api/admin", tags=["Admin Control Panel"])
-app.include_router(analytics.router, prefix="/api/analytics", tags=["Analytics & Query Trace"])
+app.include_router(student.router,   prefix="/api/student",    tags=["Student Portal"])
+app.include_router(faculty.router,   prefix="/api/faculty",    tags=["Faculty Portal"])
+app.include_router(admin.router,     prefix="/api/admin",      tags=["Admin Control Panel"])
+app.include_router(analytics.router, prefix="/api/analytics",  tags=["Analytics & Query Trace"])
 
 @app.get("/")
 def root():
