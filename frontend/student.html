@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acadendora | Student Attendance Dashboard</title>
+    <style>
+        :root {
+            --bg: #090d16;
+            --card-bg: #0f1524;
+            --card-border: #1a233a;
+            --card-hover: #172138;
+            --primary: #4f46e5;
+            --success: #10b981;
+            --success-bg: rgba(16, 185, 129, 0.12);
+            --danger: #f43f5e;
+            --danger-bg: rgba(244, 63, 94, 0.12);
+            --warning: #f59e0b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --track: #151d30;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", sans-serif;
+            margin: 0;
+            padding: 24px 36px;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Top Navigation Header */
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            background: #182238;
+            border: 1px solid #243354;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 15px;
+            color: #cbd5e1;
+        }
+
+        .user-info h2 {
+            margin: 0 0 3px 0;
+            font-size: 19px;
+            font-weight: 600;
+            color: #fff;
+            letter-spacing: -0.01em;
+        }
+
+        .user-info .meta {
+            font-size: 13px;
+            color: var(--text-muted);
+            display: flex;
+            gap: 10px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-action {
+            background: #141c2e;
+            border: 1px solid var(--card-border);
+            color: #e2e8f0;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.15s ease;
+        }
+
+        .btn-action:hover {
+            background: #1c2740;
+            border-color: #2b3b5f;
+        }
+
+        .btn-switch {
+            background: #be123c;
+            border: 1px solid #9f1239;
+            color: #fff;
+        }
+
+        .btn-switch:hover {
+            background: #9f1239;
+        }
+
+        /* Main Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            gap: 22px;
+            margin-bottom: 22px;
+            align-items: start;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 22px;
+        }
+
+        .card-title {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Donut Gauge */
+        .gauge-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4px 0 14px 0;
+        }
+
+        .donut-container {
+            position: relative;
+            width: 170px;
+            height: 170px;
+        }
+
+        .donut-container svg {
+            transform: rotate(-90deg);
+            width: 100%;
+            height: 100%;
+        }
+
+        .donut-bg {
+            fill: none;
+            stroke: var(--track);
+            stroke-width: 10;
+        }
+
+        .donut-fill {
+            fill: none;
+            stroke-width: 10;
+            stroke-linecap: round;
+            transition: stroke-dasharray 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .donut-label {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            width: 130px;
+        }
+
+        .donut-label .pct {
+            font-size: 26px;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -0.01em;
+        }
+
+        .donut-label .sub-ratio {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 5px;
+            font-weight: 500;
+        }
+
+        .donut-label .sub-delta {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 600;
+            margin-top: 5px;
+            padding: 2px 7px;
+            border-radius: 4px;
+        }
+
+        .delta-positive {
+            background: var(--success-bg);
+            color: #34d399;
+        }
+
+        .delta-negative {
+            background: var(--danger-bg);
+            color: #fb7185;
+        }
+
+        .badge-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .badge-eligible {
+            background: var(--success-bg);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.25);
+        }
+
+        .badge-debarred {
+            background: var(--danger-bg);
+            color: #fb7185;
+            border: 1px solid rgba(244, 63, 94, 0.25);
+        }
+
+        /* Redesigned 75% Cutoff Benchmark Card */
+        .benchmark-container {
+            margin-top: 14px;
+            background: #090e18;
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 14px;
+        }
+
+        .benchmark-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .benchmark-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        /* Multi-Zone Track */
+        .zone-track {
+            position: relative;
+            width: 100%;
+            height: 8px;
+            background: #141c2c;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .zone-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.6s ease;
+        }
+
+        .zone-divider {
+            position: absolute;
+            top: 0;
+            left: 75%;
+            width: 2px;
+            height: 100%;
+            background: #090e18;
+            z-index: 2;
+        }
+
+        /* 3-Col Metric Grid */
+        .benchmark-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            text-align: center;
+            padding-top: 8px;
+            border-top: 1px solid #141c2e;
+        }
+
+        .bm-stat .bm-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+            text-transform: uppercase;
+        }
+
+        .bm-stat .bm-val {
+            font-size: 12px;
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Lab vs Theory Breakdown */
+        .split-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .metric-card {
+            background: #090e18;
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 10px 12px;
+        }
+
+        .metric-card .metric-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 3px;
+        }
+
+        .metric-card .metric-val {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .viva-tag {
+            font-size: 11px;
+            color: #475569;
+            text-align: center;
+            margin-top: 14px;
+            font-family: monospace;
+        }
+
+        /* Course Attendance Breakdown */
+        .courses-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .course-card {
+            background: #090e18;
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 16px 20px;
+            transition: border-color 0.15s ease;
+        }
+
+        .course-card:hover {
+            border-color: #293856;
+        }
+
+        .course-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .course-title-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .course-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #f8fafc;
+        }
+
+        .course-badge-code {
+            font-family: monospace;
+            font-size: 11px;
+            color: #94a3b8;
+            background: #141c2c;
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid #1f2c45;
+        }
+
+        .course-stat-right {
+            text-align: right;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .course-pct {
+            font-size: 15px;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 6px;
+            background: var(--track);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0 10px 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.6s ease;
+        }
+
+        .course-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .advisory-pill {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: #101624;
+            border: 1px solid #1a2336;
+        }
+
+        /* Weekly Timetable */
+        .timetable-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 12px;
+        }
+
+        .slot-card {
+            background: #090e18;
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 12px 14px;
+        }
+
+        .slot-day {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            margin-bottom: 4px;
+        }
+
+        .slot-course {
+            font-size: 13px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .slot-details {
+            font-size: 11px;
+            color: var(--text-muted);
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        /* Collapsible SQL Trace Drawer */
+        .trace-drawer {
+            margin-top: 20px;
+            background: #090e18;
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .trace-header {
+            padding: 12px 16px;
+            background: #0f1524;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        .trace-header:hover {
+            color: #fff;
+        }
+
+        .trace-body {
+            padding: 14px 16px;
+            display: none;
+            font-family: Consolas, Monaco, "Courier New", monospace;
+            font-size: 12px;
+            color: #38bdf8;
+            background: #05080e;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Top Header -->
+    <div class="top-header">
+        <div class="user-profile">
+            <div class="avatar" id="user-avatar">--</div>
+            <div class="user-info">
+                <h2 id="student-name">Loading Profile...</h2>
+                <div class="meta">
+                    <span id="student-batch">Batch ...</span>
+                    <span>•</span>
+                    <span id="student-enrollment">Enrollment: ...</span>
+                    <span>•</span>
+                    <span id="student-dept">Department: ...</span>
+                </div>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button class="btn-action" onclick="toggleTrace()">
+                Live SQL Trace
+            </button>
+            <a href="index.html" class="btn-action btn-switch">
+                Switch User
+            </a>
+        </div>
+    </div>
+
+    <!-- Dashboard 2-Column Grid -->
+    <div class="dashboard-grid">
+
+        <!-- Left Column: Donut + Benchmark Card + Metrics -->
+        <div class="card">
+            <div class="card-title">
+                <span>Aggregate Standing</span>
+                <span class="badge-status" id="overall-badge">---</span>
+            </div>
+
+            <!-- Donut Gauge -->
+            <div class="gauge-wrapper">
+                <div class="donut-container">
+                    <svg viewBox="0 0 100 100">
+                        <circle class="donut-bg" cx="50" cy="50" r="40"></circle>
+                        <circle class="donut-fill" id="donut-circle" cx="50" cy="50" r="40" stroke="#4f46e5"
+                            stroke-dasharray="0, 251.2"></circle>
+                    </svg>
+                    <div class="donut-label">
+                        <div class="pct" id="overall-pct">0.0%</div>
+                        <div class="sub-ratio" id="donut-sub-ratio">0 / 0 Attended</div>
+                        <div class="sub-delta delta-positive" id="donut-sub-delta">---</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Redesigned 75% Cutoff Benchmark Card -->
+            <div class="benchmark-container">
+                <div class="benchmark-header">
+                    <span class="benchmark-title">Institutional Cutoff</span>
+                    <span id="benchmark-status-badge" class="badge-status badge-eligible"
+                        style="font-size: 10px;">Safe</span>
+                </div>
+
+                <div class="zone-track">
+                    <div class="zone-fill" id="benchmark-fill" style="width: 0%; background: #4f46e5;"></div>
+                    <div class="zone-divider" title="75% Cutoff Boundary"></div>
+                </div>
+
+                <div class="benchmark-stats">
+                    <div class="bm-stat">
+                        <div class="bm-label">Required</div>
+                        <div class="bm-val" style="color: #cbd5e1;">75.0%</div>
+                    </div>
+                    <div class="bm-stat">
+                        <div class="bm-label">Current</div>
+                        <div class="bm-val" id="bm-actual" style="color: #fff;">0.0%</div>
+                    </div>
+                    <div class="bm-stat">
+                        <div class="bm-label">Margin</div>
+                        <div class="bm-val" id="bm-margin" style="color: #34d399;">+0.0%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lab vs Theory Breakdown -->
+            <div class="split-metrics">
+                <div class="metric-card">
+                    <div class="metric-label">Lab Practicals</div>
+                    <div class="metric-val" id="metric-lab" style="color: #38bdf8;">--</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Theory Classes</div>
+                    <div class="metric-val" id="metric-theory" style="color: #818cf8;">--</div>
+                </div>
+            </div>
+
+            <div class="viva-tag">
+                Deterministic Function: <code>CalculateAttendance(Student_ID, Course_ID)</code>
+            </div>
+        </div>
+
+        <!-- Right Column: Course Attendance Records -->
+        <div class="card">
+            <div class="card-title">
+                <span>Course Attendance Breakdown</span>
+                <span style="font-size: 11px; text-transform: none; color: #64748b;">
+                    View: <code>Student_Attendance_Summary</code>
+                </span>
+            </div>
+
+            <div class="courses-list" id="courses-list">
+                <div style="text-align: center; padding: 30px; color: #64748b;">
+                    Loading courses...
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Bottom Section: Weekly Timetable -->
+    <div class="card">
+        <div class="card-title">
+            <span>Weekly Class Timetable Schedule</span>
+            <span style="font-size: 11px; text-transform: none; color: #64748b;">Batch B-11 Section Schedule</span>
+        </div>
+
+        <div class="timetable-grid" id="timetable-grid">
+            <div style="color: #64748b; padding: 10px;">Loading schedule...</div>
+        </div>
+    </div>
+
+    <!-- Collapsible SQL Trace Drawer -->
+    <div class="trace-drawer">
+        <div class="trace-header" onclick="toggleTrace()">
+            <span>Active Relational Queries Triggered by this View</span>
+            <span id="trace-toggle-icon">Click to Expand</span>
+        </div>
+        <div class="trace-body" id="trace-body">
+            -- 1. Profile Resolution:<br>
+            SELECT p.First_Name, p.Last_Name, s.Enrollment_No, b.Batch_Name, d.Department_Name<br>
+            FROM STUDENT s JOIN PERSON p ON s.Person_ID = p.Person_ID<br>
+            JOIN BATCH b ON s.Batch_ID = b.Batch_ID JOIN DEPARTMENT d ON s.Department_ID = d.Department_ID<br>
+            WHERE s.Student_ID = <span id="trace-id">10</span>;<br><br>
+            -- 2. Course Attendance View Resolution:<br>
+            SELECT * FROM Student_Attendance_Summary WHERE Student_ID = <span id="trace-id-2">10</span>;<br><br>
+            -- 3. Timetable Schedule (6-Table Join):<br>
+            SELECT c.Course_Name, p.First_Name, r.Room_Number, ts.Day_Of_Week, ts.Start_Time<br>
+            FROM TIMETABLE t JOIN COURSE c ON t.Course_ID = c.Course_ID<br>
+            JOIN FACULTY f ON t.Faculty_ID = f.Faculty_ID JOIN PERSON p ON f.Person_ID = p.Person_ID<br>
+            JOIN ROOM r ON t.Room_ID = r.Room_ID JOIN TIME_SLOT ts ON t.Slot_ID = ts.Slot_ID<br>
+            WHERE t.Section_ID = 1 ORDER BY ts.Slot_ID;
+        </div>
+    </div>
+
+    <script>
+        const COURSE_THEMES = {
+            "24B15CS213": { color: "#38bdf8", type: "Lab" },
+            "24B11CS211": { color: "#818cf8", type: "Theory" },
+            "24B11CS212": { color: "#34d399", type: "Theory" },
+            "24B11MA211": { color: "#fbbf24", type: "Theory" }
+        };
+
+        const FALLBACK_PALETTE = ["#38bdf8", "#818cf8", "#34d399", "#fbbf24", "#f472b6"];
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const studentId = parseInt(urlParams.get('id')) || 10;
+
+        document.getElementById('trace-id').innerText = studentId;
+        document.getElementById('trace-id-2').innerText = studentId;
+
+        async function loadDashboard() {
+            try {
+                const [profRes, attRes, timeRes] = await Promise.all([
+                    fetch(`http://127.0.0.1:8000/api/student/${studentId}/profile`),
+                    fetch(`http://127.0.0.1:8000/api/student/${studentId}/attendance-summary`),
+                    fetch(`http://127.0.0.1:8000/api/student/${studentId}/timetable`)
+                ]);
+
+                const profile = await profRes.json();
+                const attList = await attRes.json();
+                const timetable = await timeRes.json();
+
+                // 1. Profile
+                const fullName = profile.Full_Name || profile.full_name || profile.name || `Student ${studentId}`;
+                document.getElementById('student-name').innerText = fullName;
+                document.getElementById('user-avatar').innerText = fullName.split(' ').map(n => n[0]).join('').substring(0, 2);
+                document.getElementById('student-batch').innerText = `Batch ${profile.Batch_Name || profile.batch || 'B-11'}`;
+                document.getElementById('student-enrollment').innerText = `Enrollment: ${profile.Enrollment_No || profile.enrollment_no || '---'}`;
+                document.getElementById('student-dept').innerText = `${profile.Department_Name || profile.department || 'CSE'}`;
+
+                // 2. Courses
+                const coursesList = document.getElementById('courses-list');
+                coursesList.innerHTML = '';
+
+                let totalSessionsSum = 0;
+                let presentSessionsSum = 0;
+                let labPresent = 0, labTotal = 0;
+                let theoryPresent = 0, theoryTotal = 0;
+
+                if (!attList || attList.length === 0) {
+                    coursesList.innerHTML = '<div style="color: #64748b; text-align: center; padding: 20px;">No course records found.</div>';
+                } else {
+                    attList.forEach((c, idx) => {
+                        const courseName = c.Course_Name || c.course_name;
+                        const courseCode = c.Course_Code || c.course_code;
+                        const total = c.Total_Sessions || c.total_sessions || 0;
+                        const present = c.Present_Count != null ? c.Present_Count : (c.present_count || 0);
+                        const absent = c.Absent_Count != null ? c.Absent_Count : (total - present);
+                        const pct = c.Attendance_Pct != null ? parseFloat(c.Attendance_Pct) : (c.attendance_pct || 0);
+
+                        totalSessionsSum += total;
+                        presentSessionsSum += present;
+
+                        const isLab = courseName.toLowerCase().includes("lab");
+                        if (isLab) {
+                            labPresent += present;
+                            labTotal += total;
+                        } else {
+                            theoryPresent += present;
+                            theoryTotal += total;
+                        }
+
+                        const theme = COURSE_THEMES[courseCode] || {
+                            color: FALLBACK_PALETTE[idx % FALLBACK_PALETTE.length],
+                            type: isLab ? "Lab" : "Theory"
+                        };
+
+                        const isSafe = pct >= 75;
+                        const barColor = isSafe ? theme.color : '#f43f5e';
+
+                        let advisoryHtml = "";
+                        if (isSafe) {
+                            const maxCanMiss = Math.floor((present - 0.75 * total) / 0.75);
+                            const msg = maxCanMiss > 0 ? `Can miss up to ${maxCanMiss} class(es)` : `On 75% boundary`;
+                            advisoryHtml = `<span class="advisory-pill" style="color: #34d399;">${msg}</span>`;
+                        } else {
+                            const needed = Math.ceil((0.75 * total - present) / 0.25);
+                            advisoryHtml = `<span class="advisory-pill" style="color: #fb7185; border-color: rgba(244,63,94,0.3);">Need ${needed} consecutive classes</span>`;
+                        }
+
+                        const card = document.createElement('div');
+                        card.className = 'course-card';
+                        card.innerHTML = `
+              <div class="course-header">
+                <div class="course-title-group">
+                  <span class="course-title">${courseName}</span>
+                  <span class="course-badge-code">${courseCode}</span>
+                </div>
+                <div class="course-stat-right">
+                  <span class="course-pct" style="color: ${barColor};">${pct.toFixed(1)}%</span>
+                  <span class="badge-status ${isSafe ? 'badge-eligible' : 'badge-debarred'}">
+                    ${isSafe ? 'Eligible' : 'Shortage'}
+                  </span>
+                </div>
+              </div>
+              <div class="progress-track">
+                <div class="progress-bar" style="width: ${pct}%; background: ${barColor};"></div>
+              </div>
+              <div class="course-footer">
+                <span>Attended <strong>${present}</strong> of <strong>${total}</strong> classes (${absent} missed)</span>
+                <div>${advisoryHtml}</div>
+              </div>
+            `;
+                        coursesList.appendChild(card);
+                    });
+                }
+
+                // 3. Aggregate Gauge & Metrics
+                const overallPct = totalSessionsSum > 0 ? (presentSessionsSum / totalSessionsSum) * 100 : 0;
+                const delta = overallPct - 75.0;
+
+                document.getElementById('overall-pct').innerText = `${overallPct.toFixed(1)}%`;
+                document.getElementById('donut-sub-ratio').innerText = `${presentSessionsSum} / ${totalSessionsSum} Attended`;
+
+                const deltaElem = document.getElementById('donut-sub-delta');
+                const bmActual = document.getElementById('bm-actual');
+                const bmMargin = document.getElementById('bm-margin');
+                const bmStatusBadge = document.getElementById('benchmark-status-badge');
+
+                bmActual.innerText = `${overallPct.toFixed(1)}%`;
+
+                if (delta >= 0) {
+                    deltaElem.className = 'sub-delta delta-positive';
+                    deltaElem.innerText = `+${delta.toFixed(1)}% buffer`;
+                    bmMargin.innerText = `+${delta.toFixed(1)}% Buffer`;
+                    bmMargin.style.color = '#34d399';
+                    bmStatusBadge.className = 'badge-status badge-eligible';
+                    bmStatusBadge.innerText = 'Compliant';
+                } else {
+                    deltaElem.className = 'sub-delta delta-negative';
+                    deltaElem.innerText = `${Math.abs(delta).toFixed(1)}% shortage`;
+                    bmMargin.innerText = `${delta.toFixed(1)}% Deficit`;
+                    bmMargin.style.color = '#fb7185';
+                    bmStatusBadge.className = 'badge-status badge-debarred';
+                    bmStatusBadge.innerText = 'Debarred';
+                }
+
+                const circle = document.getElementById('donut-circle');
+                const circumference = 2 * Math.PI * 40;
+                const offset = (overallPct / 100) * circumference;
+                circle.style.strokeDasharray = `${offset}, ${circumference}`;
+
+                const badge = document.getElementById('overall-badge');
+                const benchFill = document.getElementById('benchmark-fill');
+
+                benchFill.style.width = `${Math.min(overallPct, 100)}%`;
+
+                if (overallPct >= 75) {
+                    circle.setAttribute('stroke', '#4f46e5');
+                    badge.className = 'badge-status badge-eligible';
+                    badge.innerText = 'Eligible';
+                    benchFill.style.background = '#4f46e5';
+                } else {
+                    circle.setAttribute('stroke', '#f43f5e');
+                    badge.className = 'badge-status badge-debarred';
+                    badge.innerText = 'Debarred';
+                    benchFill.style.background = '#f43f5e';
+                }
+
+                // Lab vs Theory Split
+                document.getElementById('metric-lab').innerText = labTotal > 0 ? `${labPresent} / ${labTotal} (${((labPresent / labTotal) * 100).toFixed(0)}%)` : "--";
+                document.getElementById('metric-theory').innerText = theoryTotal > 0 ? `${theoryPresent} / ${theoryTotal} (${((theoryPresent / theoryTotal) * 100).toFixed(0)}%)` : "--";
+
+                // 4. Timetable Cards
+                const timetableGrid = document.getElementById('timetable-grid');
+                timetableGrid.innerHTML = '';
+
+                if (timetable && timetable.length > 0) {
+                    timetable.forEach((slot, idx) => {
+                        const courseCode = slot.Course_Code || '';
+                        const theme = COURSE_THEMES[courseCode] || { color: FALLBACK_PALETTE[idx % FALLBACK_PALETTE.length] };
+
+                        const slotCard = document.createElement('div');
+                        slotCard.className = 'slot-card';
+                        slotCard.style.borderLeft = `3px solid ${theme.color}`;
+                        slotCard.innerHTML = `
+              <div class="slot-day" style="color: ${theme.color};">
+                <span>${slot.Day_Of_Week || slot.day}</span>
+                <span>${slot.Start_Time || slot.time}</span>
+              </div>
+              <div class="slot-course">${slot.Course_Name || slot.course_name}</div>
+              <div class="slot-details">
+                <span>Room: ${slot.Room_Number || slot.room}</span>
+                <span>Faculty: ${slot.Faculty_Name || slot.faculty}</span>
+              </div>
+            `;
+                        timetableGrid.appendChild(slotCard);
+                    });
+                } else {
+                    timetableGrid.innerHTML = '<div style="color: #64748b; padding: 10px;">No classes scheduled.</div>';
+                }
+
+            } catch (err) {
+                console.error("Dashboard error:", err);
+            }
+        }
+
+        function toggleTrace() {
+            const body = document.getElementById('trace-body');
+            const icon = document.getElementById('trace-toggle-icon');
+            if (body.style.display === 'block') {
+                body.style.display = 'none';
+                icon.innerText = 'Click to Expand';
+            } else {
+                body.style.display = 'block';
+                icon.innerText = 'Click to Collapse';
+            }
+        }
+
+        loadDashboard();
+    </script>
+</body>
+
+</html>

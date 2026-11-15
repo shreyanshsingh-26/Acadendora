@@ -70,3 +70,5 @@ def get_query_trace(trace_type: str):
     finally:
         cursor.close()
         conn.close()
+
+        
