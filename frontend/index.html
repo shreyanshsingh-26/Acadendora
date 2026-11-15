@@ -150,7 +150,7 @@
                     <span class="tech-pill"><i class="bi bi-shield-lock-fill text-info"></i> ACID Transactions</span>
                     <span class="tech-pill"><i class="bi bi-lightning-charge-fill text-warning"></i> Row-Level
                         Triggers</span>
-                    <span class="tech-pill"><i class="bi bi-arrow-repeat text-danger"></i> Database Cursors</span>
+                    <span class="tech-pill"><i class="bi bi-arrow-repeat text-danger"></i> Stored Procedures</span>
                     <span class="tech-pill"><i class="bi bi-diagram-3-fill text-primary"></i> 6-Table Joins</span>
                 </div>
 
@@ -177,7 +177,7 @@
                 </div>
 
                 <div class="d-flex align-items-center gap-3 text-secondary small">
-                    <div><span class="status-dot bg-success me-1"></span> Cloud MySQL 8.0 Engine</div>
+                    <div><span class="status-dot bg-success me-1"></span> MySQL 8.0 Engine</div>
                     <div><span class="status-dot bg-primary me-1"></span> FastAPI REST Gateway</div>
                     <div><span class="status-dot bg-info me-1"></span> Port 8000 Online</div>
                 </div>
@@ -240,7 +240,7 @@
                                     <div class="fw-bold text-white text-truncate" id="previewName">Shreyansh Singh</div>
                                     <span class="badge" id="previewBadge"
                                         style="background: rgba(16,185,129,0.15); color: #34d399; font-size: 10px;">
-                                        100% ELIGIBLE
+                                        STUDENT
                                     </span>
                                 </div>
                                 <div class="text-secondary small text-truncate" id="previewSubtext"
@@ -270,12 +270,13 @@
                             onclick="quickLaunch('student', 10)">
                             <div>
                                 <div class="fw-semibold text-white small"><i
-                                        class="bi bi-check-circle-fill text-success me-2"></i>Shreyansh Singh</div>
-                                <div style="font-size: 11px; color: #64748b;">DBMS Lab: 100% Attendance</div>
+                                        class="bi bi-check-circle-fill text-success me-2"></i>Shreyansh Singh (CSE)
+                                </div>
+                                <div style="font-size: 11px; color: #64748b;">Batch B-11 · View Attendance Summary</div>
                             </div>
                             <span class="badge"
                                 style="background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3);">
-                                ELIGIBLE
+                                STUDENT
                             </span>
                         </div>
 
@@ -283,8 +284,9 @@
                             onclick="quickLaunch('student', 11)">
                             <div>
                                 <div class="fw-semibold text-white small"><i
-                                        class="bi bi-exclamation-triangle-fill text-danger me-2"></i>Ananya Sharma</div>
-                                <div style="font-size: 11px; color: #64748b;">DBMS Lab: 25% Shortage</div>
+                                        class="bi bi-exclamation-triangle-fill text-danger me-2"></i>Ananya Sharma (ECE)
+                                </div>
+                                <div style="font-size: 11px; color: #64748b;">Batch A-5 · Debarment Risk View</div>
                             </div>
                             <span class="badge"
                                 style="background: rgba(244,63,94,0.15); color: #fb7185; border: 1px solid rgba(244,63,94,0.3);">
@@ -310,7 +312,8 @@
                             <div>
                                 <div class="fw-semibold text-white small"><i
                                         class="bi bi-shield-shaded text-warning me-2"></i>Institutional Admin</div>
-                                <div style="font-size: 11px; color: #64748b;">Live Audit Log · Cursor Digest</div>
+                                <div style="font-size: 11px; color: #64748b;">Global Audit Trail · Debarment Engine
+                                </div>
                             </div>
                             <span class="badge"
                                 style="background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3);">
@@ -328,25 +331,27 @@
     <script>
         let currentRole = 'student';
 
+        // Verified accurately against MySQL PERSON, STUDENT, SECTION tables
         const students = [
-            { id: 10, name: "Shreyansh Singh", enroll: "2501030078", dept: "CSE" },
-            { id: 8, name: "Akshat Agarwal", enroll: "2501030071", dept: "CSE" },
-            { id: 9, name: "Krish Gupta", enroll: "2501030070", dept: "CSE" },
-            { id: 11, name: "Ananya Sharma", enroll: "2501030022", dept: "CSE" },
-            { id: 17, name: "Kavya Joshi", enroll: "2501030099", dept: "MNC" },
-            { id: 12, name: "Tanishqa", enroll: "2501030090", dept: "CSE" },
-            { id: 13, name: "Yashvi", enroll: "2501030085", dept: "CSE" },
-            { id: 16, name: "Siddharth Mishra", enroll: "2501030088", dept: "CSE" }
+            { id: 10, name: "Shreyansh Singh", enroll: "2501030078", dept: "CSE", section: "B-11" },
+            { id: 8, name: "Akshat Agarwal", enroll: "2501030071", dept: "CSE", section: "B-11" },
+            { id: 9, name: "Krish Gupta", enroll: "2501030070", dept: "CSE", section: "B-11" },
+            { id: 12, name: "Tanishqa", enroll: "2501030090", dept: "CSE", section: "B-11" },
+            { id: 13, name: "Yashvi", enroll: "2501030085", dept: "CSE", section: "B-11" },
+            { id: 11, name: "Ananya Sharma", enroll: "2501030022", dept: "ECE", section: "A-5" },
+            { id: 14, name: "Aarav Patel", enroll: "2501030024", dept: "ECE", section: "A-5" },
+            { id: 15, name: "Diya Verma", enroll: "2501030029", dept: "ECE", section: "A-5" },
+            { id: 16, name: "Siddharth Mishra", enroll: "2501030088", dept: "MNC", section: "C-2" },
+            { id: 17, name: "Kavya Joshi", enroll: "2501030099", dept: "MNC", section: "C-2" }
         ];
 
+        // Verified accurately against MySQL FACULTY, PERSON tables
         const faculty = [
-            { id: 1, name: "Dr. Aarti Goel", code: "EMP101", title: "Associate Professor", room: "A-302" },
-            { id: 2, name: "Prof. Abhishek Chaudhary", code: "EMP102", title: "Assistant Professor", room: "A-304" },
-            { id: 3, name: "Dr. Neetu Singh", code: "EMP103", title: "Professor", room: "B-105" },
-            { id: 4, name: "Dr. Vikas Saxena", code: "EMP104", title: "Professor & HOD", room: "A-301" },
-            { id: 5, name: "Dr. Manish Kumar Thakur", code: "EMP105", title: "Professor", room: "B-201" },
-            { id: 6, name: "Dr. Chetna Gupta", code: "EMP106", title: "Associate Professor", room: "A-205" },
-            { id: 7, name: "Dr. Sandeep Kumar Singh", code: "EMP107", title: "Assistant Professor", room: "B-102" }
+            { id: 1, name: "Dr. Aarti Goel", code: "EMP101", dept: "CSE", title: "Associate Professor", room: "A-302" },
+            { id: 2, name: "Prof. Abhishek Chaudhary", code: "EMP102", dept: "CSE", title: "Assistant Professor", room: "A-304" },
+            { id: 3, name: "Dr. Neetu Singh", code: "EMP103", dept: "ECE", title: "Associate Professor", room: "B-105" },
+            { id: 4, name: "Dr. Vikas Saxena", code: "EMP104", dept: "CSE", title: "Professor", room: "A-301" },
+            { id: 7, name: "Dr. Sandeep Kumar Singh", code: "EMP107", dept: "MNC", title: "Associate Professor", room: "B-102" }
         ];
 
         document.addEventListener("DOMContentLoaded", () => {
@@ -365,7 +370,7 @@
                 students.forEach(s => {
                     const opt = document.createElement('option');
                     opt.value = s.id;
-                    opt.innerText = `${s.name} (${s.enroll})`;
+                    opt.innerText = `${s.name} (${s.enroll}) · ${s.dept} (${s.section})`;
                     dropdown.appendChild(opt);
                 });
                 dropdown.value = 10; // Default Shreyansh
@@ -373,7 +378,7 @@
                 faculty.forEach(f => {
                     const opt = document.createElement('option');
                     opt.value = f.id;
-                    opt.innerText = `${f.name} · ${f.code} (${f.title})`;
+                    opt.innerText = `${f.name} · ${f.code} (${f.dept})`;
                     dropdown.appendChild(opt);
                 });
                 dropdown.value = 1; // Default Dr. Aarti Goel
@@ -395,8 +400,11 @@
                     avatar.style.background = "rgba(99,102,241,0.2)";
                     avatar.style.color = "#818cf8";
                     name.innerText = s.name;
-                    badge.style.display = 'none'; // Removed eligible badge
-                    subtext.innerText = `Enrollment: ${s.enroll} · ${s.dept} Dept · Sem 3`;
+                    badge.style.display = 'inline-block';
+                    badge.innerText = `${s.dept} · Section ${s.section}`;
+                    badge.style.background = "rgba(16,185,129,0.15)";
+                    badge.style.color = "#34d399";
+                    subtext.innerText = `Enrollment: ${s.enroll} · Academic Year 2026-27`;
                 }
             } else if (currentRole === 'faculty') {
                 const f = faculty.find(item => item.id === selectedId);
@@ -406,10 +414,10 @@
                     avatar.style.color = "#818cf8";
                     name.innerText = f.name;
                     badge.style.display = 'inline-block';
-                    badge.innerText = f.code;
+                    badge.innerText = `${f.dept} · ${f.code}`;
                     badge.style.background = "rgba(99,102,241,0.15)";
                     badge.style.color = "#a5b4fc";
-                    subtext.innerText = `${f.title} · Office: ${f.room}`;
+                    subtext.innerText = `${f.title} · Allocated Cabin: ${f.room}`;
                 }
             }
         }
@@ -420,14 +428,24 @@
             document.getElementById(`tab-${role}`).classList.add('active');
 
             const selectGroup = document.getElementById('selectGroup');
-            const card = document.getElementById('profileCard');
+            const avatar = document.getElementById('previewAvatar');
+            const name = document.getElementById('previewName');
+            const badge = document.getElementById('previewBadge');
+            const subtext = document.getElementById('previewSubtext');
 
             if (role === 'admin') {
                 selectGroup.style.display = 'none';
-                card.style.display = 'none';
+                avatar.innerText = "🛡";
+                avatar.style.background = "rgba(168,85,247,0.2)";
+                avatar.style.color = "#c084fc";
+                name.innerText = "Institutional Admin";
+                badge.style.display = 'inline-block';
+                badge.innerText = "SUPERUSER";
+                badge.style.background = "rgba(245,158,11,0.15)";
+                badge.style.color = "#fbbf24";
+                subtext.innerText = "Full Institutional Authority · Audit Logs · Debarment Engine";
             } else {
                 selectGroup.style.display = 'block';
-                card.style.display = 'flex';
                 populateDropdown();
             }
         }
