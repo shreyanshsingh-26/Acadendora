@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acadendora | Academic Attendance & Analytics System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-dark: #07090e;
+            --card-bg: #10141e;
+            --card-border: rgba(255, 255, 255, 0.08);
+            --primary: #6366f1;
+            --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            --accent-green: #10b981;
+            --accent-rose: #f43f5e;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-dark);
+            color: #f8fafc;
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            align-items: center;
+            background-image:
+                radial-gradient(circle at 15% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 45%),
+                radial-gradient(circle at 85% 80%, rgba(124, 58, 237, 0.12) 0%, transparent 45%);
+        }
+
+        .glass-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .tech-pill {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.09);
+            padding: 6px 14px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #94a3b8;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tab-pill {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid transparent;
+            color: #94a3b8;
+            border-radius: 12px;
+            padding: 12px;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.2s;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .tab-pill.active {
+            background: var(--primary-gradient);
+            color: white;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35);
+        }
+
+        .profile-preview-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .avatar-circle {
+            width: 46px;
+            height: 46px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .demo-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 12px 16px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            text-align: left;
+            width: 100%;
+        }
+
+        .demo-btn:hover {
+            background: rgba(99, 102, 241, 0.1);
+            border-color: rgba(99, 102, 241, 0.4);
+            transform: translateX(4px);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        select option {
+            background: #141824;
+            color: #fff;
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container-fluid px-lg-5 py-4">
+        <div class="row align-items-center justify-content-center g-5">
+
+            <!-- LEFT COLUMN: Overview & Viva Details -->
+            <div class="col-xl-6 col-lg-6 px-lg-5">
+
+                <h1 class="display-3 fw-bolder text-white mb-2 tracking-tight" style="letter-spacing: -1.5px;">
+                    Acadendora
+                </h1>
+                <p class="fs-5 text-secondary mb-4" style="line-height: 1.5;">
+                    SQL-First Academic Attendance Management & Institutional Analytics System
+                </p>
+
+                <!-- Live Architecture Highlights -->
+                <div class="d-flex flex-wrap gap-2 mb-4">
+                    <span class="tech-pill"><i class="bi bi-database-check text-success"></i> 14-Table 3NF
+                        Normalized</span>
+                    <span class="tech-pill"><i class="bi bi-shield-lock-fill text-info"></i> ACID Transactions</span>
+                    <span class="tech-pill"><i class="bi bi-lightning-charge-fill text-warning"></i> Row-Level
+                        Triggers</span>
+                    <span class="tech-pill"><i class="bi bi-arrow-repeat text-danger"></i> Database Cursors</span>
+                    <span class="tech-pill"><i class="bi bi-diagram-3-fill text-primary"></i> 6-Table Joins</span>
+                </div>
+
+                <!-- Viva Submission Details Card -->
+                <div class="glass-card p-4 mb-4" style="background: rgba(16, 20, 30, 0.7);">
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <small class="text-secondary d-block fw-semibold" style="font-size: 11px;">SUBMITTED
+                                TO</small>
+                            <div class="fw-bold text-white mt-1">Dr. Aarti Goel</div>
+                            <div class="small text-secondary">Prof. Abhishek Chaudhary</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <small class="text-secondary d-block fw-semibold" style="font-size: 11px;">SUBMITTED BY
+                                (BATCH B-11)</small>
+                            <div class="fw-bold text-white mt-1">Akshat Agarwal <span
+                                    class="text-secondary fw-normal">(2501030071)</span></div>
+                            <div class="fw-bold text-white">Krish Gupta <span
+                                    class="text-secondary fw-normal">(2501030070)</span></div>
+                            <div class="fw-bold text-white">Shreyansh Singh <span
+                                    class="text-secondary fw-normal">(2501030078)</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center gap-3 text-secondary small">
+                    <div><span class="status-dot bg-success me-1"></span> Cloud MySQL 8.0 Engine</div>
+                    <div><span class="status-dot bg-primary me-1"></span> FastAPI REST Gateway</div>
+                    <div><span class="status-dot bg-info me-1"></span> Port 8000 Online</div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN: Interactive Portal Launcher -->
+            <div class="col-xl-5 col-lg-6">
+                <div class="glass-card p-4 p-md-5">
+
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h4 class="fw-bold text-white mb-0">System Portal</h4>
+                            <small class="text-secondary">Select your academic role to launch</small>
+                        </div>
+                        <div class="p-2 rounded-3" style="background: rgba(99,102,241,0.15); color: #818cf8;">
+                            <i class="bi bi-person-badge fs-4"></i>
+                        </div>
+                    </div>
+
+                    <!-- Role Selector Tabs -->
+                    <div class="row g-2 mb-4">
+                        <div class="col-4">
+                            <div class="tab-pill active" id="tab-student" onclick="setRole('student')">
+                                <i class="bi bi-person-fill d-block fs-5 mb-1"></i> Student
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="tab-pill" id="tab-faculty" onclick="setRole('faculty')">
+                                <i class="bi bi-mortarboard-fill d-block fs-5 mb-1"></i> Faculty
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="tab-pill" id="tab-admin" onclick="setRole('admin')">
+                                <i class="bi bi-shield-fill-check d-block fs-5 mb-1"></i> Admin
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Account Dropdown Selector -->
+                    <form onsubmit="handleLogin(event)">
+                        <div class="mb-3" id="selectGroup">
+                            <label class="form-label small fw-semibold text-secondary mb-1" id="selectLabel">SELECT
+                                ACCOUNT</label>
+                            <select id="userDropdown" class="form-select border-0 text-white rounded-3 py-3 px-3"
+                                style="background: #171c2a; font-size: 14px; font-weight: 500;"
+                                onchange="handleDropdownChange()">
+                                <!-- Populated dynamically via JS -->
+                            </select>
+                        </div>
+
+                        <!-- Profile Preview Card -->
+                        <div class="profile-preview-card mb-4" id="profileCard">
+                            <div class="avatar-circle" id="previewAvatar"
+                                style="background: rgba(99,102,241,0.2); color: #818cf8;">
+                                SS
+                            </div>
+                            <div class="flex-grow-1 overflow-hidden">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="fw-bold text-white text-truncate" id="previewName">Shreyansh Singh</div>
+                                    <span class="badge" id="previewBadge"
+                                        style="background: rgba(16,185,129,0.15); color: #34d399; font-size: 10px;">
+                                        100% ELIGIBLE
+                                    </span>
+                                </div>
+                                <div class="text-secondary small text-truncate" id="previewSubtext"
+                                    style="font-size: 12px;">
+                                    Enrollment: 2501030078 · CSE Dept
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn w-100 py-3 rounded-3 fw-bold text-white shadow-lg mb-4"
+                            style="background: var(--primary-gradient); border: none;">
+                            Launch Portal <i class="bi bi-arrow-right ms-1"></i>
+                        </button>
+                    </form>
+
+                    <!-- 1-Click Viva Demo Launchers -->
+                    <div class="position-relative mb-3 text-center">
+                        <hr style="border-color: rgba(255,255,255,0.08);">
+                        <span class="position-absolute top-50 start-50 translate-middle px-3"
+                            style="background: var(--card-bg); color: #64748b; font-size: 11px; font-weight: 700; letter-spacing: 0.5px;">
+                            ⚡ 1-CLICK VIVA SHORTCUTS
+                        </span>
+                    </div>
+
+                    <div class="d-flex flex-column gap-2">
+                        <div class="demo-btn d-flex justify-content-between align-items-center"
+                            onclick="quickLaunch('student', 10)">
+                            <div>
+                                <div class="fw-semibold text-white small"><i
+                                        class="bi bi-check-circle-fill text-success me-2"></i>Shreyansh Singh</div>
+                                <div style="font-size: 11px; color: #64748b;">DBMS Lab: 100% Attendance</div>
+                            </div>
+                            <span class="badge"
+                                style="background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3);">
+                                ELIGIBLE
+                            </span>
+                        </div>
+
+                        <div class="demo-btn d-flex justify-content-between align-items-center"
+                            onclick="quickLaunch('student', 11)">
+                            <div>
+                                <div class="fw-semibold text-white small"><i
+                                        class="bi bi-exclamation-triangle-fill text-danger me-2"></i>Ananya Sharma</div>
+                                <div style="font-size: 11px; color: #64748b;">DBMS Lab: 25% Shortage</div>
+                            </div>
+                            <span class="badge"
+                                style="background: rgba(244,63,94,0.15); color: #fb7185; border: 1px solid rgba(244,63,94,0.3);">
+                                DEBARRED (&lt;75%)
+                            </span>
+                        </div>
+
+                        <div class="demo-btn d-flex justify-content-between align-items-center"
+                            onclick="quickLaunch('faculty', 1)">
+                            <div>
+                                <div class="fw-semibold text-white small"><i
+                                        class="bi bi-journal-check text-primary me-2"></i>Dr. Aarti Goel</div>
+                                <div style="font-size: 11px; color: #64748b;">Conduct Class · ACID Transactions</div>
+                            </div>
+                            <span class="badge"
+                                style="background: rgba(99,102,241,0.15); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3);">
+                                FACULTY
+                            </span>
+                        </div>
+
+                        <div class="demo-btn d-flex justify-content-between align-items-center"
+                            onclick="quickLaunch('admin', 0)">
+                            <div>
+                                <div class="fw-semibold text-white small"><i
+                                        class="bi bi-shield-shaded text-warning me-2"></i>Institutional Admin</div>
+                                <div style="font-size: 11px; color: #64748b;">Live Audit Log · Cursor Digest</div>
+                            </div>
+                            <span class="badge"
+                                style="background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3);">
+                                CONTROL PANEL
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        let currentRole = 'student';
+
+        const students = [
+            { id: 10, name: "Shreyansh Singh", enroll: "2501030078", dept: "CSE" },
+            { id: 8, name: "Akshat Agarwal", enroll: "2501030071", dept: "CSE" },
+            { id: 9, name: "Krish Gupta", enroll: "2501030070", dept: "CSE" },
+            { id: 11, name: "Ananya Sharma", enroll: "2501030022", dept: "CSE" },
+            { id: 17, name: "Kavya Joshi", enroll: "2501030099", dept: "MNC" },
+            { id: 12, name: "Tanishqa", enroll: "2501030090", dept: "CSE" },
+            { id: 13, name: "Yashvi", enroll: "2501030085", dept: "CSE" },
+            { id: 16, name: "Siddharth Mishra", enroll: "2501030088", dept: "CSE" }
+        ];
+
+        const faculty = [
+            { id: 1, name: "Dr. Aarti Goel", code: "EMP101", title: "Associate Professor", room: "A-302" },
+            { id: 2, name: "Prof. Abhishek Chaudhary", code: "EMP102", title: "Assistant Professor", room: "A-304" },
+            { id: 3, name: "Dr. Neetu Singh", code: "EMP103", title: "Professor", room: "B-105" },
+            { id: 4, name: "Dr. Vikas Saxena", code: "EMP104", title: "Professor & HOD", room: "A-301" },
+            { id: 5, name: "Dr. Manish Kumar Thakur", code: "EMP105", title: "Professor", room: "B-201" },
+            { id: 6, name: "Dr. Chetna Gupta", code: "EMP106", title: "Associate Professor", room: "A-205" },
+            { id: 7, name: "Dr. Sandeep Kumar Singh", code: "EMP107", title: "Assistant Professor", room: "B-102" }
+        ];
+
+        document.addEventListener("DOMContentLoaded", () => {
+            populateDropdown();
+        });
+
+        function getInitials(name) {
+            return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        }
+
+        function populateDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.innerHTML = '';
+
+            if (currentRole === 'student') {
+                students.forEach(s => {
+                    const opt = document.createElement('option');
+                    opt.value = s.id;
+                    opt.innerText = `${s.name} (${s.enroll})`;
+                    dropdown.appendChild(opt);
+                });
+                dropdown.value = 10; // Default Shreyansh
+            } else if (currentRole === 'faculty') {
+                faculty.forEach(f => {
+                    const opt = document.createElement('option');
+                    opt.value = f.id;
+                    opt.innerText = `${f.name} · ${f.code} (${f.title})`;
+                    dropdown.appendChild(opt);
+                });
+                dropdown.value = 1; // Default Dr. Aarti Goel
+            }
+            handleDropdownChange();
+        }
+
+        function handleDropdownChange() {
+            const selectedId = parseInt(document.getElementById('userDropdown').value);
+            const avatar = document.getElementById('previewAvatar');
+            const name = document.getElementById('previewName');
+            const badge = document.getElementById('previewBadge');
+            const subtext = document.getElementById('previewSubtext');
+
+            if (currentRole === 'student') {
+                const s = students.find(item => item.id === selectedId);
+                if (s) {
+                    avatar.innerText = getInitials(s.name);
+                    avatar.style.background = "rgba(99,102,241,0.2)";
+                    avatar.style.color = "#818cf8";
+                    name.innerText = s.name;
+                    badge.style.display = 'none'; // Removed eligible badge
+                    subtext.innerText = `Enrollment: ${s.enroll} · ${s.dept} Dept · Sem 3`;
+                }
+            } else if (currentRole === 'faculty') {
+                const f = faculty.find(item => item.id === selectedId);
+                if (f) {
+                    avatar.innerText = getInitials(f.name);
+                    avatar.style.background = "rgba(99,102,241,0.2)";
+                    avatar.style.color = "#818cf8";
+                    name.innerText = f.name;
+                    badge.style.display = 'inline-block';
+                    badge.innerText = f.code;
+                    badge.style.background = "rgba(99,102,241,0.15)";
+                    badge.style.color = "#a5b4fc";
+                    subtext.innerText = `${f.title} · Office: ${f.room}`;
+                }
+            }
+        }
+
+        function setRole(role) {
+            currentRole = role;
+            document.querySelectorAll('.tab-pill').forEach(el => el.classList.remove('active'));
+            document.getElementById(`tab-${role}`).classList.add('active');
+
+            const selectGroup = document.getElementById('selectGroup');
+            const card = document.getElementById('profileCard');
+
+            if (role === 'admin') {
+                selectGroup.style.display = 'none';
+                card.style.display = 'none';
+            } else {
+                selectGroup.style.display = 'block';
+                card.style.display = 'flex';
+                populateDropdown();
+            }
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const id = currentRole === 'admin' ? 0 : document.getElementById('userDropdown').value;
+            quickLaunch(currentRole, id);
+        }
+
+        function quickLaunch(role, id) {
+            localStorage.setItem('userRole', role);
+            localStorage.setItem('userId', id);
+            if (role === 'student') window.location.href = `student.html?id=${id}`;
+            else if (role === 'faculty') window.location.href = `faculty.html?id=${id}`;
+            else window.location.href = 'admin.html';
+        }
+    </script>
+</body>
+
+</html>
