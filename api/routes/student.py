@@ -10,11 +10,21 @@ def get_student_profile(student_id: int):
     try:
         query = """
             SELECT s.Person_ID, p.Full_Name, p.Email, p.Phone,
-                   s.Enrollment_No, s.Status, d.Dept_Name
+                   s.Enrollment_No, s.Status, d.Dept_Name,
+                   CASE 
+                       WHEN d.Department_ID = 1 THEN 'CSE'
+                       WHEN d.Department_ID = 2 THEN 'ECE'
+                       WHEN d.Department_ID = 4 THEN 'MnC'
+                       ELSE d.Dept_Name 
+                   END AS Department_Code,
+                   COALESCE(sec.Section_Name, 'Unassigned') AS Batch_Name
             FROM STUDENT s
             JOIN PERSON p ON s.Person_ID = p.Person_ID
             JOIN DEPARTMENT d ON p.Department_ID = d.Department_ID
-            WHERE s.Person_ID = %s;
+            LEFT JOIN ENROLLMENT e ON s.Person_ID = e.Student_ID
+            LEFT JOIN SECTION sec ON e.Section_ID = sec.Section_ID
+            WHERE s.Person_ID = %s
+            LIMIT 1;
         """
         cursor.execute(query, (student_id,))
         student = cursor.fetchone()
@@ -24,7 +34,7 @@ def get_student_profile(student_id: int):
     finally:
         cursor.close()
         conn.close()
-
+               
 @router.get("/{student_id}/attendance-summary")
 def get_attendance_summary(student_id: int):
     """Queries pre-computed view Student_Attendance_Summary."""
